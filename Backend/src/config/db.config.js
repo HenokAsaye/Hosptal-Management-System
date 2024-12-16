@@ -6,9 +6,8 @@ dotenv.config()
 
 export const connectToDb = async()=>{
     try {
-        await mongoose.connect(process.env.MONOG_URI)
+        await mongoose.connect(process.env.MONGO_URI)
         logger.info("connected to the database")
-        process.exit(0)
     } catch (error) {
         logger.error("Failed to connect to the database");
         process.exit(1)

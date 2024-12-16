@@ -1,33 +1,34 @@
-import {createLogger,transports,format} from "winston";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-dotenv.config();
-const file_name = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(file_name)
-const logDirectory = path.join(__dirname,"log")
-if(!fs.existsSync(logDirectory)){
-    fs.mkdir(logDirectory)
+import { createLogger, format, transports } from 'winston';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+import fs from 'fs';
+const logDir = path.join(__dirname, 'log');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir);
 }
+
 export const logger = createLogger({
-    level:'info',
-    format:format.combine(
-        format.timeStamp('YY:MM:DD  HH:MM:SS'),
-        format.json()
-    ),
-    transports:[
-        new transports.File({filename:path.join(logDirectory,'access.log'),level:'info'}),
-        new transports.File({filename:path.join(logDirectory,'custom.log'),level:'warn'}),
-        new transports.File({filename:path.join(logDirectory,'error.log'),level:'error'}),
-        new transports.File({filename:path.join(logDirectory,'combine.log')})
-    ]
-})
-if(process.env.NODE_ENVIROMENT !== 'production'){
-    logger.add(
-        new transports.console({
-            format:format.combine(format.simple(),format.colorize)
-        }
-    )
-    )
+  level: 'info',
+  format: format.combine(
+    format.timestamp({ format: 'YY:MM:DD HH:mm:ss' }),
+    format.json()
+  ),
+  transports: [
+    new transports.File({ filename: path.join(logDir, 'access.log'), level: 'info' }),
+    new transports.File({ filename: path.join(logDir, 'combined.log') }),
+    new transports.File({ filename: path.join(logDir, 'custom.log'), level: 'warn' }),
+    new transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' })
+  ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(
+    new transports.Console({
+      format: format.combine(format.colorize(), format.simple())
+    })
+  );
 }
