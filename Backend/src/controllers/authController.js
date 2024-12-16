@@ -1,96 +1,106 @@
 import bcrypt from "bcrypt";
-import { User } from "../model/userModel.js"; 
+import  User  from "../model/userModel.js"; 
 import Patient from "../model/patientModel.js"; 
 import { sendVerificationEmail, sendPasswordResetEmail, sendPasswordResetSuccessEmail } from "../service/emailService.js";
-import { generateToken } from "../utils/jwt.js";
-import logger from "../config/log.config.js";
+import { generateToken } from "../util/jwt.js";
+import {logger} from "../config/logger.env.js";
 import crypto from "crypto";
 
 export const signup = async (req, res) => {
-    const { name, email, password, role } = req.body;
-
-    const validRoles = ["patient", "receptionist", "nurse", "doctor", "lab-technician", "admin", "pharmacist"];
-
-    if (!validRoles.includes(role)) {
-        return res.status(400).json({ success: false, message: "Invalid role selected" });
-    }
+    const { name, email, password, role, region, city, woreda, age, contact } = req.body;
+    const validRoles = ["receptionist", "nurse", "doctor", "lab-technician", "pharmacist"];
 
     try {
-        if (role === "patient") {
-            const existingPatient = await Patient.findOne({ email });
-            if (existingPatient) {
-                return res.status(400).json({ success: false, message: `Account already exists with email ${email}` });
-            }
+        const isPatient = !role || role === "patient";
+        const existingUser = isPatient 
+            ? await Patient.findOne({ email }) 
+            : await User.findOne({ email });
 
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-
-            const newPatient = new Patient({
-                name,
-                email,
-                password: hashedPassword,
-                verificationToken,
-                verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
-            });
-
-            await newPatient.save();
-            sendVerificationEmail(email, verificationToken);
-
-            return res.status(201).json({
-                success: true,
-                message: "Patient account created successfully. Please verify your email.",
-            });
-        } else {
-            const existingUser = await User.findOne({ email });
-            if (existingUser) {
-                return res.status(400).json({ success: false, message: `Account already exists with email ${email}` });
-            }
-
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
-
-            const newUser = new User({
-                name,
-                email,
-                password: hashedPassword,
-                role,
-                verificationToken,
-                verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
-            });
-
-            await newUser.save();
-            sendVerificationEmail(email, verificationToken);
-
-            return res.status(201).json({
-                success: true,
-                message: `${role.charAt(0).toUpperCase() + role.slice(1)} account created successfully. Please verify your email.`
+        if (existingUser) {
+            return res.status(400).json({ 
+                success: false, 
+                message: `Account already exists with email ${email}` 
             });
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+        const emailSent = await sendVerificationEmail(email, verificationToken);
+        if (!emailSent) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid email address. Please try again." 
+            });
+        }
+        const userData = {
+            name,
+            email,
+            password: hashedPassword,
+            verificationToken,
+            verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, 
+            isVerified: false,
+        };
+
+        if (isPatient) {
+            const patientData = {
+                ...userData,
+                age,
+                contact,
+                address: { city, region, woreda },
+            };
+            const newPatient = new Patient(patientData);
+            await newPatient.save();
+        } else {
+            if (!validRoles.includes(role)) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Invalid role selected" 
+                });
+            }
+            const newUser = new User({ ...userData, role });
+            await newUser.save();
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: "Account created successfully. Please verify your email.",
+        });
     } catch (error) {
         logger.error(`Error during signup: ${error.message}`);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
     }
 };
+
 
 export const verifyEmail = async (req, res) => {
     const { code } = req.body;
 
+    if (!code) {
+        return res.status(400).json({ 
+            success: false, 
+            message: "Verification code is required and must be a valid string." 
+        });
+    }
+
     try {
-        let user = await Patient.findOne({
+        const query = {
             verificationToken: code,
             verificationTokenExpiresAt: { $gt: Date.now() },
-        });
+        };
+
+        const user = await Patient.findOne(query) || await User.findOne(query);
 
         if (!user) {
-            user = await User.findOne({
-                verificationToken: code,
-                verificationTokenExpiresAt: { $gt: Date.now() },
-            });
-        }
+            const expiredUser = await Patient.findOne({ verificationToken: code }) 
+                || await User.findOne({ verificationToken: code });
 
-        if (!user) {
-            logger.warn(`Invalid or expired verification token: ${code}`);
-            return res.status(400).json({ success: false, message: "Invalid or expired verification token" });
+            const message = expiredUser 
+                ? "Verification token has expired. Please request a new one." 
+                : "Invalid verification token.";
+            return res.status(400).json({ success: false, message });
         }
 
         user.isVerified = true;
@@ -98,16 +108,19 @@ export const verifyEmail = async (req, res) => {
         user.verificationTokenExpiresAt = undefined;
         await user.save();
 
-        logger.info(`Email successfully verified: ${user.email}`);
         return res.status(200).json({
             success: true,
-            message: "Your email has been verified.",
+            message: "Your email has been verified successfully. You can now log in.",
         });
     } catch (error) {
         logger.error(`Error during email verification: ${error.message}`);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
     }
 };
+
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -131,7 +144,7 @@ export const login = async (req, res) => {
             return res.status(403).json({ success: false, message: "Please verify your email before logging in." });
         }
 
-        const token = generateToken({ id: user._id, role: user.role || "patient" });
+        const token = generateToken(user,res);
 
         logger.info(`User logged in: ${user.email}`);
         return res.status(200).json({
@@ -148,7 +161,7 @@ export const login = async (req, res) => {
 
 export const logOut = async(req,res)=>{
     res.clearCookie('token');
-    return res.status(200).json({success:false,message:"SuccessFully LOgged Out"})
+    return res.status(200).json({success:true,message:"SuccessFully LOgged Out"})
 }
 
 export const forgotPassword = async (req, res) => {
