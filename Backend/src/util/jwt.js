@@ -14,3 +14,4 @@ export const generateToken = async (Id, res) => {
     });
     return token;
 };
+ 
