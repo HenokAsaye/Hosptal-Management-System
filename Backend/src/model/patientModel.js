@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-
-
 const patientSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -18,14 +16,22 @@ const patientSchema = new mongoose.Schema({
         type:String,
         unique:true
     },
+    password:{
+        type:String,
+        required:true
+    },
     verificationToken:{
         type:Number,
     },
     verificationTokenExpiresAt:{
         type:Date
     },
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
     resetToken:{
-        type:Numeber,
+        type:String,
     },
     resetTokenExpiresAt:{
         type:Date
@@ -53,7 +59,5 @@ const patientSchema = new mongoose.Schema({
         default:Date.now()
     }
 });
-
-
 const Patient = mongoose.model("Patient",patientSchema);
 export default Patient;
