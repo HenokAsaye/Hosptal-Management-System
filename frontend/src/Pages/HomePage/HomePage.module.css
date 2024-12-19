@@ -1,0 +1,145 @@
+.banner {
+    background-image: url("../../assets/images/banner-bg.jpg"); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    height: 80vh; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 56px;
+}
+
+.banner__content h2 {
+    font-size: 2rem;
+    animation: slide-in 1s ease-in-out forwards;
+    margin-left: -350px;
+}
+
+.banner__content p {
+    opacity: 0;
+    animation: fade-in 1.5s ease-in-out forwards;
+    margin-left: -350px;
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Service Section */
+.services {
+    background-color: #e6f7ff;
+    text-align: center;
+}
+
+.service__card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    background: #f4f4f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.3s ease;
+    margin: 24px auto;
+    max-width: 1200px;
+    align-items: center;
+}
+
+.service__card:hover {
+    transform: scale(1.05);
+}
+
+.service__card h3 {
+    color: #0044cc;
+    margin-bottom: 10px;
+}
+
+/* About Us Section */
+.about__us {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background-color: #e6f7ff;
+    text-align: center;
+    padding: 20px;
+}
+
+.about__us p {
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+.about__us h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+/* Careers Section */
+.careers {
+    background-color: #f0f8ff;
+    text-align: center;
+    border-top: 2px solid #0044cc;
+    padding: 30px;
+    margin-top: 20px;
+}
+
+.careers p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.careers ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.careers ul li {
+    font-size: 1rem;
+    margin: 10px 0;
+}
+
+.careers ul li strong {
+    color: #0044cc;
+}
+
+/* Contact Us Section */
+.contact__us {
+    text-align: left;
+    padding: 2rem;
+    background-color: #f4f4f4;
+}
+
+.contact__us h2 {
+    font-size: 1.8rem;
+}
+@media (max-width: 768px) {
+    .banner {
+        height: 50vh;
+    }
+    .about-us{
+        flex-direction: column;
+    }
+}

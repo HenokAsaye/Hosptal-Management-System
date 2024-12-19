@@ -1,0 +1,84 @@
+.verify{
+  font-family: Arial, sans-serif;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f9f9f9; /* Light background */
+}
+
+/* Main Container */
+.verify__container {
+  background-color: #fff;
+  padding: 30px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Heading */
+.verify__heading {
+  font-size: 1.5rem;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+/* Input Group */
+.verify__input__group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+#verify__email,
+#verify__code {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+#verify__email:focus,
+#verify__code:focus {
+  border-color: #007bff;
+}
+
+/* Button Styles */
+.verify__link {
+  display: inline-block;
+  width: 100%;
+  background-color: #007bff;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 1rem;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.verify__link:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+/* Message */
+.message {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #28a745; /* Success color */
+  text-align: center;
+}
