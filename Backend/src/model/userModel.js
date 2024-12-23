@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
       enum: ["doctor", "nurse", "pharmacist", "receptionist", "lab_technician",],
       required: true,
     },
-    isVerified: { type: Boolean, default: false }, 
+    isVerified: {
+         type: Boolean,
+         default: false
+        }, 
     verificationToken:{
         type:Number
     },
