@@ -11,6 +11,10 @@ const appointmentSchema = new mongoose.Schema({
          ref: "User", 
          required: true 
     },
+    reason:{
+        type:String,
+        required:true
+    },
     timeSlot: { type: Date,
          required: true 
     },
