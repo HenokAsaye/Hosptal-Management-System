@@ -1,0 +1,12 @@
+/* App.css */
+body {
+  font-family: 'Arial', sans-serif; /* Default font family */
+}
+
+h1, h2, h3, p {
+  font-family: 'Roboto Slab', sans-serif; /* Specific font family */
+}
+
+a {
+  font-family: 'Helvetica', sans-serif;
+}
