@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import classes from "./ForgetPassword.module.css";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../../../lib/util";
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
@@ -8,29 +9,24 @@ const ForgetPassword = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (email.trim() === "") {
-      setMessage("Please enter a valid email address.");
-      return;
-    }
+  if (email.trim() === "") {
+    setMessage("Please enter a valid email address.");
+    return;
+  }
 
-    try {
-      // Simulate backend API call (replace with actual API)
-      // const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
-      console.log("Password recovery requested for email:", email);
-      setMessage("Recovery link sent! Check your email for further instructions.");
+  try {
+    const response = await apiClient.post("/auth/forgotPassword", { email });
+    setMessage(response.data.message || "Recovery email sent successfully!");
+    navigate("/reset-password")
+  } catch (error) {
+    console.error("Error:", error);
+    setMessage(error.response?.data?.message || "An error occurred. Please try again.");
+  }
+};
 
-      // Navigate to Reset Password page
-      setTimeout(() => {
-        navigate("/reset-password");
-      }, 3000); 
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("An error occurred. Please try again.");
-    }
-  };
-
+ 
 
   return (
     <section className={classes.forgot}>

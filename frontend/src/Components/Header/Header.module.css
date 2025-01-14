@@ -75,6 +75,32 @@ header {
     transition: color 0.3s ease;
     transform: scale(1.1);
 }
+.user__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user__action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+}
+.profile__placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
 @media (max-width: 768px) {
     .header__container {
         text-align: center;

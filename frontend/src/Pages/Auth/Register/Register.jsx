@@ -1,22 +1,36 @@
 import React, { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import classes from "./Register.module.css";
+import apiClient from "../../../lib/util";
+import Cookies from "js-cookie"; // Import js-cookie
 
 const Register = () => {
   const [searchParams] = useSearchParams();
   const userType = searchParams.get("type");
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    fullname: "",
-    phone: "",
-    email: "",
-    password: "",
-    region: "",
-    city: "",
-    woreda: "",
-    role: userType === "patient" ? "patient" : "", // Default role if user is a patient
-  });
+  // Initialize form data with default values based on user type
+  const [formData, setFormData] = useState(
+    userType === "patient"
+      ? {
+          name: "",
+          contact: "",
+          age: "",
+          email: "",
+          password: "",
+          region: "",
+          city: "",
+          woreda: "",
+          role: "patient", // Fixed role for patients
+        }
+      : {
+          name: "",
+          contact: "",
+          email: "",
+          password: "",
+          role: "", // Placeholder for non-patient roles
+        }
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -27,13 +41,17 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      // Simulate backend API call
-      console.log("Form submitted:", formData);
+      console.log("Form Data before sending:", formData);
 
-      // Simulate successful registration
-      console.log(`${userType} registration successful! (Simulated)`);
+      // Call the backend API to register the user
+      const response = await apiClient.post("/auth/signup", formData);
 
-      // Redirect to Verify Email Page with email in state
+      console.log("Registration successful:", response.data);
+
+      // Store the role in a cookie for persistent access
+      Cookies.set("userRole", formData.role, { expires: 7 }); // Save role in the cookie
+
+      // Redirect to the email verification page (if applicable)
       navigate("/verify-email", { state: { email: formData.email } });
     } catch (error) {
       console.error("Registration failed:", error.message || "Unknown error");
@@ -53,9 +71,9 @@ const Register = () => {
             <input
               type="text"
               id="fullname"
-              name="fullname"
+              name="name"
               placeholder="Enter your full name"
-              value={formData.fullname}
+              value={formData.name} 
               onChange={handleInputChange}
               required
             />
@@ -65,9 +83,9 @@ const Register = () => {
             <input
               type="tel"
               id="phone"
-              name="phone"
+              name="contact"
               placeholder="Enter your phone number"
-              value={formData.phone}
+              value={formData.contact}  
               onChange={handleInputChange}
               required
             />
@@ -96,44 +114,67 @@ const Register = () => {
               required
             />
           </div>
-          <div className={classes.address__group}>
-            <label>Address</label>
-            <div className={classes.address__fields}>
-              <div>
-                <label htmlFor="region">Region</label>
+
+          {/* Conditionally render the address fields for patients */}
+          {userType === "patient" && (
+            <>
+              <div className={classes.form__group}>
+                <label htmlFor="age">Age</label>
                 <input
-                  type="text"
-                  id="region"
-                  name="region"
-                  placeholder="Region"
-                  value={formData.region}
+                  type="number"
+                  id="age"
+                  name="age"
+                  placeholder="Enter your age"
+                  value={formData.age}
                   onChange={handleInputChange}
+                  required
                 />
               </div>
-              <div>
-                <label htmlFor="city">City</label>
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  placeholder="City"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                />
+
+              <div className={classes.address__group}>
+                <label>Address</label>
+                <div className={classes.address__fields}>
+                  <div>
+                    <label htmlFor="region">Region</label>
+                    <input
+                      type="text"
+                      id="region"
+                      name="region"
+                      placeholder="Region"
+                      value={formData.region}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="city">City</label>
+                    <input
+                      type="text"
+                      id="city"
+                      name="city"
+                      placeholder="City"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="woreda">Woreda</label>
+                    <input
+                      type="text"
+                      id="woreda"
+                      name="woreda"
+                      placeholder="Woreda"
+                      value={formData.woreda}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
               </div>
-              <div>
-                <label htmlFor="woreda">Woreda</label>
-                <input
-                  type="text"
-                  id="woreda"
-                  name="woreda"
-                  placeholder="Woreda"
-                  value={formData.woreda}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-          </div>
+            </>
+          )}
+
           {userType !== "patient" && (
             <div className={classes.form__group}>
               <label htmlFor="role">Select Role</label>
@@ -149,12 +190,13 @@ const Register = () => {
                 </option>
                 <option value="doctor">Doctor</option>
                 <option value="nurse">Nurse</option>
-                <option value="lab technician">Lab Technician</option>
+                <option value="lab_technician">Lab Technician</option>
                 <option value="receptionist">Receptionist</option>
                 <option value="pharmacist">Pharmacist</option>
               </select>
             </div>
           )}
+
           <div className={classes.footer__section}>
             <button type="submit" className={classes.register__btn}>
               Register {userType === "patient" ? "as Patient" : "as Other"}

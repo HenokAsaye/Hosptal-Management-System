@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./Login.module.css";
-import Loader from "../../Components/Loader/Loader";
+import Loader from "../../../Components/Loader/Loader";
+import apiClient from "../../../lib/util";
+import { useRole } from "../../../context/roleContext";
+import Cookies from "js-cookie"; // Import js-cookie
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +14,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const { setUserRole } = useRole(); // Remove role from context, as you will now use the cookie
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,24 +22,47 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      // Simulate API call (replace with actual backend call)
-      if (formData.email === "test@example.com" && formData.password === "password") {
-        console.log("Login successful! (Simulated)");
-        navigate("/dashboard");
-      } else {
-        throw new Error("Invalid email or password (Simulated)");
-      }
-    } catch (error) {
-      console.error("Login failed:", error.message);
-      setError(error.message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false); // Stop loader whether success or failure
+  try {
+    const response = await apiClient.post("/auth/login", formData);
+    console.log("API response:", response.data); // Check the response structure
+    const { user } = response.data; // Extract the user object
+    const role = user.role; 
+
+    // Store role in the context (optional)
+    setUserRole(role);
+    console.log("Role set in context:", role);
+
+    // Store the role in cookies
+    Cookies.set("userRole", role, { expires: 7, path: "/" }); 
+    console.log("Role stored in cookie:", Cookies.get("userRole")); // Debugging the cookie
+
+    // Navigate to the dashboard based on the role
+    if (role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (role === "patient") {
+      navigate("/patient/dashboard");
+    } else if (role === "doctor") {
+      navigate("/doctor/dashboard");
+    } else if (role === "nurse") {
+      navigate("/nurse/dashboard");
+    } else if (role === "pharmacist") {
+      navigate("/pharmacist/dashboard");
+    } else if (role === "laboratorist") {
+      navigate("/lab/dashboard");
+    } else {
+      navigate("/dashboard");
     }
-  };
+  } catch (error) {
+    console.error("Login failed:", error.message);
+    setError(error.response?.data?.message || "Login failed. Please try again.");
+  } finally {
+    setLoading(false); // Stop loading spinner
+  }
+};
+
 
   return (
     <section className={classes.login}>

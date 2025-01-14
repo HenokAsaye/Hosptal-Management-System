@@ -7,7 +7,7 @@ import hospital from "../../assets/images/hospital.jpg"
 const HomePage = () => {
   return (
     <div>
-      <Header />
+      <Header isLoggedIn={false} />
       <main>
         <section className={Home.banner}>
           <div className={Home.banner__content}>
@@ -42,12 +42,12 @@ const HomePage = () => {
             <img
               src={hospital}
               alt="Zewditu Memorial Hospital Building"
-              className="about-image"
+              className={Home.about__image}
             />
           </div>
         </section>
 
-        <section id="careers" class={Home.careers}>
+        <section id="careers" className={Home.careers}>
     <h2>Meet Our Team</h2>
     <p>Our hospital management system is supported by a dedicated team of professionals committed to delivering quality patient care. Learn about their roles:</p>
     <ul>
@@ -59,7 +59,7 @@ const HomePage = () => {
     </ul>
 </section>
 
-   <section id="contact" class={Home.contact__us}>
+   <section id="contact" className={Home.contact__us}>
         <h2>Contact Us</h2>
         <p>Address: Addis Ababa, Ethiopia</p>
         <p>Phone: +251-911-695-310</p>

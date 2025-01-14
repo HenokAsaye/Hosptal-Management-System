@@ -9,6 +9,7 @@ const Header = () => {
       <div className={classes.header__container}>
         <img src={logo} alt="Logo" className={classes.logo} />
         <h1>Zewditu Memorial Hospital</h1>
+
         <nav className={classes.navbar}>
           <ul>
             <li><a href="/">Home</a></li>
@@ -16,8 +17,14 @@ const Header = () => {
             <li><a href="#contact">Contact Us</a></li>
           </ul>
         </nav>
-        <Link to="/login" className={classes.login__button}>Login</Link>
-      </div>
+
+       
+            <Link to="/login" className={classes.login__button}>
+              Login
+            </Link>
+          
+        </div>
+      
     </header>
   );
 };
