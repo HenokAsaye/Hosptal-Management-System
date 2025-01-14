@@ -6,7 +6,8 @@ router.post("/signup",signup);
 router.post("/login",login);
 router.post("/verifyEmail",verifyEmail);
 router.delete("/logout",logOut);
-router.post("/forgotPassword",forgotPassword);
-router.post("/resetPassword",resetPassword)
+router.post("/forgotPassword", forgotPassword);
+router.put("/resetPassword/:token", resetPassword);
+
 
 export default router;
