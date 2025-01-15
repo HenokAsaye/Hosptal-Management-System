@@ -1,0 +1,107 @@
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Main Content */
+.main {
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Notifications Header */
+.notificationsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.notificationsHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.markReadButton {
+  padding: 8px 12px;
+  background-color: #4689e5;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+
+.markReadButton:hover {
+  background-color: #3b76c2;
+}
+
+/* Notification Item */
+.notificationItem {
+  display: flex;
+  flex-direction: column;
+  background-color: #eef3ff;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notificationItem .time {
+  font-size: 12px;
+  color: #999;
+}
+
+.notificationItem p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.notificationItem p strong {
+  color: #333;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  .notificationsHeader h2 {
+    font-size: 18px;
+  }
+
+  .markReadButton {
+    padding: 6px 10px;
+  }
+
+  .notificationItem p {
+    font-size: 12px;
+  }
+
+  .notificationItem .time {
+    font-size: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .main {
+    padding: 20px;
+  }
+}

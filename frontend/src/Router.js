@@ -16,6 +16,10 @@ import LabDashbord from "./Pages/Laboratorist/LabDashboard/LabDashbord";
 import { useRole } from "./context/roleContext";
 import Loader from "./Components/Loader/Loader";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
+import PatientData from "./Pages/Doctor/PatientData/PatientData";
+import DoctorAppointments from "./Pages/Doctor/DoctorAppointments/DoctorAppointments";
+import DoctorNotifications from "./Pages/Doctor/DoctorNotifications/DoctorNotifications";
+import Availability from "./Pages/Doctor/Availability/Availability";
 
 function Routering() {
   const { role, isLoading } = useRole(); // Use the role and loading state from context
@@ -83,6 +87,39 @@ function Routering() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/patient-data"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <PatientData /> 
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor-appointments"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <DoctorAppointments /> 
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor-notification"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <DoctorNotifications /> 
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor-availability"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <Availability /> 
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/reception/dashboard"
           element={

@@ -1,0 +1,237 @@
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.main {
+  flex: 1;
+  padding: 15px;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* Availability Section */
+.availabilityHeader {
+  margin-bottom: 20px;
+}
+
+.availabilityHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.availabilityForm {
+  margin-right: 100px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.formGroup label {
+  font-size: 14px;
+  color: #555;
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.formButtons {
+  display: flex;
+  gap: 10px;
+}
+
+.formButtons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.saveButton {
+  background-color: #4689e5;
+}
+
+.editButton {
+  background-color: #f0ad4e;
+}
+
+.deleteButton {
+  background-color: #d9534f;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 100%;
+  height: auto;
+  background-color: #eef3ff;
+  color: black;
+  padding-top: 10px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: black;
+}
+
+.sidebar ul li:hover {
+  background-color: #333;
+}
+
+.sidebar ul li i {
+  margin-right: 10px;
+}
+
+/* Header Styles */
+.header {
+  width: 100%;
+  background-color: #4689e5;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profilePlaceholder {
+  margin-left: 60px;
+  margin-bottom: 10px;
+  width: 40px;
+  height: 25px;
+  background-color: #e5e5e5;
+  border-radius: 50%;
+}
+
+.welcomeText {
+  font-size: 14px;
+  color: white;
+  font-weight: 500;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: auto;
+    height: auto;
+  }
+
+  .sidebar ul li {
+    font-size: 14px;
+    padding: 12px 15px;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  .availabilityForm {
+    margin-right: 150px;
+    margin-left: 30px;
+  }
+
+  .availabilityHeader h2 {
+    font-size: 22px;
+  }
+
+  .formGroup input,
+  .formGroup select {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .formButtons button {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    flex-direction: row;
+  }
+
+  .sidebar {
+    width: 250px;
+    height: 85%;
+  }
+
+  .main {
+    padding: 20px;
+  }
+
+  .availabilityForm {
+    margin-right: 300px;
+    margin-left: 40px;
+  }
+
+  .availabilityHeader h2 {
+    font-size: 26px;
+  }
+
+  .formGroup input,
+  .formGroup select {
+    padding: 14px;
+    font-size: 18px;
+  }
+
+  .formButtons button {
+    padding: 14px 25px;
+    font-size: 18px;
+  }
+}

@@ -14,7 +14,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { setUserRole } = useRole(); // Remove role from context, as you will now use the cookie
+  const { setUserRole } = useRole(); // Using the setUserRole function from context
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,47 +22,45 @@ const LoginPage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    const response = await apiClient.post("/auth/login", formData);
-    console.log("API response:", response.data); // Check the response structure
-    const { user } = response.data; // Extract the user object
-    const role = user.role; 
+    try {
+      const response = await apiClient.post("/auth/login", formData);
+      console.log("API response:", response.data); // Check the response structure
+      const { user } = response.data; // Extract the user object
+      const role = user.role; 
 
-    // Store role in the context (optional)
-    setUserRole(role);
-    console.log("Role set in context:", role);
+      // Store the role in the context
+      setUserRole(role);  // Set role in the RoleContext
 
-    // Store the role in cookies
-    Cookies.set("userRole", role, { expires: 7, path: "/" }); 
-    console.log("Role stored in cookie:", Cookies.get("userRole")); // Debugging the cookie
+      // Store the role in cookies
+      Cookies.set("userRole", role, { expires: 7, path: "/" }); 
+      console.log("Role stored in cookie:", Cookies.get("userRole")); // Debugging the cookie
 
-    // Navigate to the dashboard based on the role
-    if (role === "admin") {
-      navigate("/admin/dashboard");
-    } else if (role === "patient") {
-      navigate("/patient/dashboard");
-    } else if (role === "doctor") {
-      navigate("/doctor/dashboard");
-    } else if (role === "nurse") {
-      navigate("/nurse/dashboard");
-    } else if (role === "pharmacist") {
-      navigate("/pharmacist/dashboard");
-    } else if (role === "laboratorist") {
-      navigate("/lab/dashboard");
-    } else {
-      navigate("/dashboard");
+      // Navigate to the dashboard based on the role
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "patient") {
+        navigate("/patient/dashboard");
+      } else if (role === "doctor") {
+        navigate("/doctor/dashboard");
+      } else if (role === "nurse") {
+        navigate("/nurse/dashboard");
+      } else if (role === "pharmacist") {
+        navigate("/pharmacist/dashboard");
+      } else if (role === "laboratorist") {
+        navigate("/lab/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login failed:", error.message);
+      setError(error.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading spinner
     }
-  } catch (error) {
-    console.error("Login failed:", error.message);
-    setError(error.response?.data?.message || "Login failed. Please try again.");
-  } finally {
-    setLoading(false); // Stop loading spinner
-  }
-};
-
+  };
 
   return (
     <section className={classes.login}>

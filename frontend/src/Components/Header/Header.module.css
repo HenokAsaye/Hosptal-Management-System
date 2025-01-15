@@ -1,3 +1,4 @@
+/* Header Styles */
 header {
     background-color: #2873dc;
     color: #fff;
@@ -5,6 +6,7 @@ header {
     top: 0;
     z-index: 1;
 }
+
 .header__container {
     display: flex;
     align-items: center;
@@ -13,14 +15,17 @@ header {
     margin: 0 auto;
     height: 70px;
 }
+
 .logo {
     width: 150px;
     height: auto;
 }
+
 .header__container h1 {
-    margin-left: -300px;
+    margin-left: -250px;
     font-size: 1.5rem;
 }
+
 .navbar {
     color: #fff;
     display: flex;
@@ -67,6 +72,7 @@ header {
     transform: scale(1);
     margin-right: 8px;
 }
+
 .login__button:hover {
     background-color: #ffa500;
     color: #fff;
@@ -75,40 +81,63 @@ header {
     transition: color 0.3s ease;
     transform: scale(1.1);
 }
-.user__info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+
+.userInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.userInfo span{
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-right: 250px;
+}
+
+.logoutButton {
+    background-color: #fff;
+    color: #000;
+    padding: 0.3rem 0.8rem; 
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    transform: scale(1);
+    margin-right: 8px;
+}
+.logoutButton:hover{
+    background-color: #ff1e00;
+    color: #fff;
+    border: 2px solid #fff;
+    position: relative;
+    transition: color 0.3s ease;
+    transform: scale(1.1);
 }
 
 .user__action {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 15px;
-}
-.profile__placeholder {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #007bff;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  font-weight: bold;
-  text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
 }
 
+
+/* Mobile responsiveness */
 @media (max-width: 768px) {
     .header__container {
         text-align: center;
     }
-    .header__container h1{
+    
+    .header__container h1 {
         margin-left: 24px;
     }
+
     .navbar li {
         display: none;
+    }
+
+    .user__action {
+        display: block;
+        justify-content: center;
     }
 }
