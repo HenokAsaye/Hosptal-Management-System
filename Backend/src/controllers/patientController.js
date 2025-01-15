@@ -102,9 +102,7 @@ export const checkLabResult = async (req, res) => {
                 message: "You are not allowed to access this!"
             });
         }
-
         const totalLabResult = await labResult.countDocuments({ patientId });
-
         logger.info("Lab results retrieved successfully", { patientId });
         return res.status(200).json({
             success: true,
