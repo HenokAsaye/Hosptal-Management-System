@@ -20,6 +20,10 @@ import PatientData from "./Pages/Doctor/PatientData/PatientData";
 import DoctorAppointments from "./Pages/Doctor/DoctorAppointments/DoctorAppointments";
 import DoctorNotifications from "./Pages/Doctor/DoctorNotifications/DoctorNotifications";
 import Availability from "./Pages/Doctor/Availability/Availability";
+import RegisterPatient from "./Pages/Receptionist/RegisterPatient/RegisterPatient";
+import ScheduleAppointment from "./Pages/Receptionist/ScheduleAppointment/ScheduleAppointment";
+import CancelAppointment from "./Pages/Receptionist/CancelAppointment/CancelAppointment";
+import ValidatePayment from "./Pages/Receptionist/ValidatePayment/ValidatePayment";
 
 function Routering() {
   const { role, isLoading } = useRole(); // Use the role and loading state from context
@@ -128,6 +132,39 @@ function Routering() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/register-patient"
+          element={
+            <ProtectedRoute requiredRole="receptionist">
+              <RegisterPatient />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/schedule-appointment"
+          element={
+            <ProtectedRoute requiredRole="receptionist">
+              <ScheduleAppointment/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cancel-appointment"
+          element={
+            <ProtectedRoute requiredRole="receptionist">
+              <CancelAppointment/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/validate-payment"
+          element={
+            <ProtectedRoute requiredRole="receptionist">
+              <ValidatePayment/>
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/nurse/dashboard"
           element={
