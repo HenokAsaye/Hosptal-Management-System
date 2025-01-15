@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-
-
 export const labResultSchema  = new mongoose.Schema({
     resultId:{
         type:String,
@@ -42,8 +40,5 @@ export const labResultSchema  = new mongoose.Schema({
         default:Date.now()
     }
 });
-
-
-
 const labResult = mongoose.model("labResult",labResultSchema);
 export default labResult;
