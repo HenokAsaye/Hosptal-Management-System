@@ -40,7 +40,7 @@ export const checkMedicalHistory = async (req, res) => {
             });
         }
 
-        if (String(Id) !== String(req.user)) {
+        if (String(Id) !== String(req.user.id)) {
             logger.warn("Unauthorized access to medical history", { patientId: Id });
             return res.status(403).json({
                 success: false,
