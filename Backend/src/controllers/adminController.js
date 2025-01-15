@@ -1,6 +1,6 @@
-import { Admin } from "../model/adminmodel.js"
+import Admin  from "../model/adminmodel.js"
 import { logger } from "../config/logger.env.js";
-import {User} from "../model/userModel.js"
+import User from "../model/userModel.js"
 import fs from 'fs';
 import { parse } from 'json2csv';
 import { logAction } from "../config/logger.env.js"; 

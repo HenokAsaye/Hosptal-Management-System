@@ -1,7 +1,7 @@
-import { Patient } from "../model/patientModel.js";
-import { User } from "../model/userModel.js";
-import { labResult } from "../model/labResultModel.js";
-import { Appointment } from "../model/appointmentModel.js";
+import Patient  from "../model/patientModel.js";
+import User  from "../model/userModel.js";
+import labResult  from "../model/labResultModel.js";
+import Appointment from "../model/appointmentModel.js";
 import dotenv from "dotenv";
 dotenv.config();
 import { isValid, isFuture } from "date-fns";

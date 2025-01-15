@@ -1,7 +1,7 @@
-import { Patient } from "../model/patientModel.js";
-import { labResult } from "../model/labResultModel.js";
-import { Notification } from "../model/notificationModel.js";
-import { Appointment } from "../model/appointmentModel.js";
+import Patient  from "../model/patientModel.js";
+import labResult  from "../model/labResultModel.js";
+import Notification  from "../model/notificationModel.js";
+import Appointment from "../model/appointmentModel.js";
 import dotenv from "dotenv";
 import { logger } from "../config/logger.env.js";
 import mongoose from "mongoose";

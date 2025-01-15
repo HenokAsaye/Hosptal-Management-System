@@ -1,13 +1,53 @@
-import Notification from "../models/notification.model.js";
-import Appointment from "../models/appointment.model.js";
-import { logger } from "../config/logger.config.js";
-import Notification from "../models/notification.model.js";
-import { io } from "../server.js"; 
+import { logger } from "../config/logger.env.js";
+import Notification from "../model/notificationModel.js";
+import { getSocketInstance, socketEvents } from "../service/socketService.js";
 import cron from "node-cron";
-import { io } from "../server.js";
+let io;
+socketEvents.on("socketInitialized", () => {
+  io = getSocketInstance();
+});
 
+const sendNotification = async (req, res) => {
+  try {
+    const { notificationId, receiverId, appointmentId, type, message, scheduledTime } = req.body;
 
-export const getPatientNotifications = async (req, res) => {
+    if (!notificationId || !receiverId || !type || !message || !scheduledTime) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields (notificationId, receiverId, type, message, scheduledTime) are required.",
+      });
+    }
+
+    const newNotification = new Notification({
+      notificationId,
+      receiverId,
+      appointmentId,
+      type,
+      message,
+      scheduledTime,
+    });
+
+    await newNotification.save();
+
+    // Emit new notification only if socket is initialized
+    if (io) {
+      io.emit("newNotification", newNotification);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "Notification sent successfully.",
+      data: newNotification,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to send notification. Please try again later.",
+    });
+  }
+};
+
+const getPatientNotifications = async (req, res) => {
   try {
     const { patientId } = req.params;
 
@@ -43,43 +83,7 @@ export const getPatientNotifications = async (req, res) => {
   }
 };
 
-
-export const sendNotification = async (req, res) => {
-  try {
-    const { notificationId, receiverId, appointmentId, type, message, scheduledTime } = req.body;
-    if (!notificationId || !receiverId || !type || !message || !scheduledTime) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields (notificationId, receiverId, type, message, scheduledTime) are required.",
-      });
-    }
-
-    const newNotification = new Notification({
-      notificationId,
-      receiverId,
-      appointmentId,
-      type,
-      message,
-      scheduledTime,
-    });
-
-    await newNotification.save();
-    io.emit("newNotification", newNotification);
-
-    return res.status(201).json({
-      success: true,
-      message: "Notification sent successfully.",
-      data: newNotification,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Failed to send notification. Please try again later.",
-    });
-  }
-};
-
-export const markNotificationAsSent = async (req, res) => {
+const markNotificationAsSent = async (req, res) => {
   try {
     const { notificationId } = req.params;
 
@@ -118,25 +122,26 @@ export const markNotificationAsSent = async (req, res) => {
   }
 };
 
+const scheduleNotifications = () => {
+  cron.schedule("* * * * *", async () => {
+    const now = new Date();
 
-export const scheduleNotifications = () => {
-    cron.schedule("* * * * *", async () => {
-      const now = new Date();
-  
-      const pendingNotifications = await Notification.find({
-        scheduledTime: { $lte: now },
-        sent: false,
-      });
-  
-      for (const notification of pendingNotifications) {
-        io.emit("newNotification", notification);
-        notification.sent = true;
-        await notification.save();
-  
-        console.log(`Notification sent: ${notification.message}`);
-      }
+    const pendingNotifications = await Notification.find({
+      scheduledTime: { $lte: now },
+      sent: false,
     });
-  
-    console.log("Notification scheduler is running...");
-  };
 
+    for (const notification of pendingNotifications) {
+      if (io) {
+        io.emit("newNotification", notification); // Emit notification if socket is initialized
+      }
+      notification.sent = true;
+      await notification.save();
+
+      console.log(`Notification sent: ${notification.message}`);
+    }
+  });
+
+  console.log("Notification scheduler is running...");
+};
+export { sendNotification, getPatientNotifications, markNotificationAsSent, scheduleNotifications };

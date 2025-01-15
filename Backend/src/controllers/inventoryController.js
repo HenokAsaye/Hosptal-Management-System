@@ -1,5 +1,5 @@
 import Medication from "../model/medicationModel.js";
-import { logger } from "../config/logger.config.js";
+import { logger } from "../config/logger.env.js";
 
 
 export const trackExpiryDates = async (req, res) => {

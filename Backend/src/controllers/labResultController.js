@@ -1,6 +1,6 @@
-import { Patient } from "../model/patientModel.js";
-import { User } from "../model/userModel.js";
-import { labResult } from "../model/labResultModel.js";
+import Patient  from "../model/patientModel.js";
+import User  from "../model/userModel.js";
+import labResult  from "../model/labResultModel.js";
 import { logger } from "../config/logger.env.js";
 import { v4 as uuidv4 } from 'uuid'; 
 export const createLabResult = async (req, res) => {

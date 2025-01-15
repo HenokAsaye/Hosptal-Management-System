@@ -1,9 +1,13 @@
 import { Server } from "socket.io";
+import { EventEmitter } from "events";
+
 let io;
+const socketEvents = new EventEmitter();
+
 export const initializeSocket = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "http:localhost:3000",
+      origin: "http://localhost:3000",
     },
   });
 
@@ -15,7 +19,8 @@ export const initializeSocket = (server) => {
     });
   });
 
-  return io;
+  // Emit an event after initializing Socket.IO
+  socketEvents.emit("socketInitialized");
 };
 
 export const getSocketInstance = () => {
@@ -24,3 +29,6 @@ export const getSocketInstance = () => {
   }
   return io;
 };
+
+// Export the event emitter for other modules to listen for initialization
+export { socketEvents };
