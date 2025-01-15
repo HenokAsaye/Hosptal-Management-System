@@ -1,62 +1,70 @@
 import mongoose from "mongoose";
 const patientSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
+    name: {
+        type: String,
+        required: true,
     },
-    age:{
-        type:Number,
-        required:true
+    age: {
+        type: Number,
+        required: true
     },
-    contact:{
-        type:String,
-        required:true
+    contact: {
+        type: String,
+        required: true
     },
-    email:{
-        type:String,
-        unique:true
+    email: {
+        type: String,
+        unique: true
     },
-    password:{
-        type:String,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
-    verificationToken:{
-        type:Number,
+    verificationToken: {
+        type: Number,
     },
-    verificationTokenExpiresAt:{
-        type:Date
+    verificationTokenExpiresAt: {
+        type: Date
     },
-    isVerified:{
-        type:Boolean,
-        default:false
+    isVerified: {
+        type: Boolean,
+        default: false
     },
-    resetToken:{
-        type:String,
+    resetToken: {
+        type: String,
     },
-    resetTokenExpiresAt:{
-        type:Date
+    resetTokenExpiresAt: {
+        type: Date
     },
-    address:{
-        region:{
-            type:String,
+    address: {
+        region: {
+            type: String,
         },
-        city:{
-            type:String
+        city: {
+            type: String
         },
-        woreda:{
-            type:String
+        woreda: {
+            type: String
         }
     },
-    medicalHistory:{
-        type:[String]
+    PaymentStatus: {
+        type: String,
+        enum: ["Paid", "Not Paid"],
+        default: "Not Paid"
     },
-    createdAt:{
-        type:Date,
-        default:Date.now()
+    medicalHistory: [{
+        diagnosis: { type: String, required: true },
+        treatment: { type: String, required: true },
+        note: { type: String, required: true },
+        addedAt: { type: Date, default: Date.now }
+    }],
+    createdAt: {
+        type: Date,
+        default: Date.now()
     },
-    updatedAt:{
-        type:Date,
-        default:Date.now()
+    updatedAt: {
+        type: Date,
+        default: Date.now()
     }
 });
 const Patient = mongoose.model("Patient",patientSchema);
