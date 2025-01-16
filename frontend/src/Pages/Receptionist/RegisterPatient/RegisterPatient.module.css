@@ -1,0 +1,92 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.formHeader h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.formGroup input:focus{
+    border: solid 1px  #007bff;
+}
+.addressGroup {
+  margin-bottom: 20px;
+}
+
+.addressFields {
+  display: flex;
+  gap: 15px;
+}
+
+.addressFields div {
+  flex: 1;
+}
+
+.formButtons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btnPrimary {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btnPrimary:hover {
+  background-color: #0056b3;
+}
+
+.btnSecondary {
+  background-color: #f8f9fa;
+  color: #333;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btnSecondary:hover {
+  background-color: #e2e6ea;
+}
