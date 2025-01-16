@@ -29,7 +29,7 @@ const LoginPage = () => {
       const response = await apiClient.post("/auth/login", formData);
       console.log("API response:", response.data); // Check the response structure
       const { user } = response.data; // Extract the user object
-      const role = user.role; 
+      const role = user.role || "patient"; 
 
       // Store the role in the context
       setUserRole(role);  // Set role in the RoleContext
