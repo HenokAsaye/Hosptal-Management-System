@@ -24,8 +24,11 @@ import RegisterPatient from "./Pages/Receptionist/RegisterPatient/RegisterPatien
 import ScheduleAppointment from "./Pages/Receptionist/ScheduleAppointment/ScheduleAppointment";
 import CancelAppointment from "./Pages/Receptionist/CancelAppointment/CancelAppointment";
 import ValidatePayment from "./Pages/Receptionist/ValidatePayment/ValidatePayment";
+<<<<<<< HEAD
 import PatientAppointment from "./Pages/Patient/PatientAppointment/PatientAppointment";
 import PatientNotification from "./Pages/Patient/PatientNotification/PatientNotificaton";
+=======
+>>>>>>> master
 
 function Routering() {
   const { role, isLoading } = useRole(); // Use the role and loading state from context
@@ -86,6 +89,7 @@ function Routering() {
           }
         />
         <Route
+<<<<<<< HEAD
           path="/patient-appointment"
           element={
             <ProtectedRoute requiredRole="patient">
@@ -102,6 +106,8 @@ function Routering() {
           }
         />
         <Route
+=======
+>>>>>>> master
           path="/doctor/dashboard"
           element={
             <ProtectedRoute requiredRole="doctor">

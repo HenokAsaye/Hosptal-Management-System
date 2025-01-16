@@ -3,6 +3,7 @@ import User from "../model/userModel.js"
 import Appointment from "../model/appointmentModel.js";
 import { sendVerificationEmail} from "../service/emailService.js";
 import {logger} from "../config/logger.env.js";
+import { sendNotificationEmail } from "../service/emailService.js";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
@@ -62,8 +63,6 @@ export const registerNewPatient = async (req, res) => {
         });
     }
 };
-
-
 export const verifyEmail = async (req, res) => {
     const { code } = req.body;
 
@@ -158,9 +157,6 @@ export const scheduleAppointment = async (req, res) => {
     }
 };
 
-
-import { sendNotification } from "../service/emailService.js";
-
 export const cancelSchedule = async (req, res) => {
     const { doctorId, timeSlot } = req.query;
     try {
@@ -176,7 +172,6 @@ export const cancelSchedule = async (req, res) => {
             timeSlot: timeSlot,
             status: "scheduled"
         });
-
         if (!cancelledAppointments || cancelledAppointments.length === 0) {
             return res.status(400).json({
                 success: false,
@@ -190,10 +185,9 @@ export const cancelSchedule = async (req, res) => {
 
             const patient = await Patient.findById(appointment.patientId);
             if (patient) {
-                await sendNotification(patient.email, "Appointment Cancelled", `Your appointment with Dr. ${doctor.name} on ${timeSlot} has been cancelled.`);
+                await sendNotificationEmail(patient.email,doctor.name,timeSlot);
             }
         }
-
         return res.status(200).json({
             success: true,
             message: "Appointments cancelled and patients notified successfully"

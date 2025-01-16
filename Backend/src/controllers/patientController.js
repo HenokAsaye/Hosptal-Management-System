@@ -1,7 +1,7 @@
-import { Patient } from "../model/patientModel.js";
-import { labResult } from "../model/labResultModel.js";
-import { Notification } from "../model/notificationModel.js";
-import { Appointment } from "../model/appointmentModel.js";
+import Patient  from "../model/patientModel.js";
+import labResult  from "../model/labResultModel.js";
+import Notification  from "../model/notificationModel.js";
+import Appointment from "../model/appointmentModel.js";
 import dotenv from "dotenv";
 import { logger } from "../config/logger.env.js";
 import mongoose from "mongoose";
@@ -40,7 +40,7 @@ export const checkMedicalHistory = async (req, res) => {
             });
         }
 
-        if (String(Id) !== String(req.user)) {
+        if (String(Id) !== String(req.user.id)) {
             logger.warn("Unauthorized access to medical history", { patientId: Id });
             return res.status(403).json({
                 success: false,
@@ -102,9 +102,7 @@ export const checkLabResult = async (req, res) => {
                 message: "You are not allowed to access this!"
             });
         }
-
         const totalLabResult = await labResult.countDocuments({ patientId });
-
         logger.info("Lab results retrieved successfully", { patientId });
         return res.status(200).json({
             success: true,

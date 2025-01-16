@@ -3,6 +3,7 @@ import {
     VERIFICATION_EMAIL_TEMPLATE,
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
+    cancelledAppointment
 } from "../util/mailTemplate.js";
 import dotenv from "dotenv";
 import {logger} from "../config/logger.env.js";
@@ -78,3 +79,18 @@ export const sendPasswordResetSuccessEmail = async (recipientEmail) => {
     }
 
 };
+
+export const sendNotificationEmail = async(recipientEmail,doctorName,timeSlot)=>{
+    try {
+        const htmlContent = cancelledAppointment
+        await sendEmail({
+            to:recipientEmail,
+            subject:"Appointment Cancellation",
+            html:htmlContent.replace("{doctorName}",doctorName,"{timeSlot}",timeSlot)
+        })
+        return true
+    } catch (error) {
+        logger.error("failed to send Appointment Cancellation Email")
+        return false
+    }
+}
