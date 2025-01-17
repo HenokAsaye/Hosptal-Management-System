@@ -9,6 +9,7 @@ import inventoryroute from "./src/routes/inventoryRoutes.js";
 import labroute from "./src/routes/labRoute.js";
 import notificationroute from "./src/routes/notificationRoutes.js";
 import { authenticateToken } from "./src/middleware/auth.js";
+import adminRoutes from "./src/routes/adminRoutes.js";
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
@@ -25,3 +26,4 @@ app.use("lab",labroute);
 app.use("/notification",notificationroute)
 app.use(authenticateToken);
 export default app;
+app.use("/admin", adminRoutes);

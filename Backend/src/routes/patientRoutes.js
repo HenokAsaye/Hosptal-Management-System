@@ -4,12 +4,12 @@ import { authorizeRole } from "../middleware/auth.js";
 const router = Router();
 
 
-router.get('/checkmedicalhistory',authorizeRole('patient'),checkMedicalHistory),
-router.get('/checklabresult',authorizeRole('patient'),checkLabResult),
-router.get('/patientappointment',authorizeRole('patient'),patientAppointment),
-router.get('patientnotification',authorizeRole('patient'),patientNotification),
-router.delete('deleteappointment',authorizeRole('patient'),deleteAppointment),
-router.delete('deletenotification',authorizeRole('patient'),deleteNotification)
+router.get('/checkmedicalhistory',checkMedicalHistory),
+router.get('/checklabresult',checkLabResult),
+router.get('/patientappointment',patientAppointment),
+router.get('patientnotification',patientNotification),
+router.delete('deleteappointment',deleteAppointment),
+router.delete('deletenotification',deleteNotification)
 
 
 export default router;

@@ -28,8 +28,6 @@ const sendNotification = async (req, res) => {
     });
 
     await newNotification.save();
-
-    // Emit new notification only if socket is initialized
     if (io) {
       io.emit("newNotification", newNotification);
     }
@@ -133,7 +131,7 @@ const scheduleNotifications = () => {
 
     for (const notification of pendingNotifications) {
       if (io) {
-        io.emit("newNotification", notification); // Emit notification if socket is initialized
+        io.emit("newNotification", notification); 
       }
       notification.sent = true;
       await notification.save();

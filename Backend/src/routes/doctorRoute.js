@@ -3,10 +3,10 @@ import { getPatientByName,getPatientLabResults,getPatientMedicalHistory,editPati
 import { authorizeRole } from "../middleware/auth.js";
 const router = Router();
 
-router.get('/getpatientName',authorizeRole('doctor'),getPatientByName)
-router.get('/getpatientmedicalhistory',authorizeRole('doctor'),getPatientMedicalHistory)
-router.put('/editmedicalhistory/:patientId',authorizeRole('doctor'),editPatientMedicalHistory),
-router.post('/scheduleappointment',authorizeRole('doctor'),scheduleAppointment)
-router.get('/getpatientlabresult',authorizeRole('doctor'),getPatientLabResults)
+router.get('/getpatientName',getPatientByName)
+router.get('/getpatientmedicalhistory',getPatientMedicalHistory)
+router.put('/editmedicalhistory/:patientId',editPatientMedicalHistory),
+router.post('/scheduleappointment',scheduleAppointment)
+router.get('/getpatientlabresult',getPatientLabResults)
 
 export default router;

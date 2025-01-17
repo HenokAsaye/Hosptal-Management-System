@@ -4,11 +4,11 @@ import { authorizeRole } from "../middleware/auth.js";
 const router = Router();
 
 
-router.post('/registernewpatient',authorizeRole('reception'),registerNewPatient)
+router.post('/registernewpatient',registerNewPatient)
 router.post('/verifyEmail',verifyEmail),
-router.post('/scheduleappointment',authorizeRole('reception'),scheduleAppointment)
-router.delete('/cancelschedule',authorizeRole('reception'),cancelSchedule)
-router.post('/verifypayment',authorizeRole('reception'),verifyPatientPayment)
+router.post('/scheduleappointment',scheduleAppointment)
+router.delete('/cancelschedule',cancelSchedule)
+router.post('/verifypayment',verifyPatientPayment)
 
 
 export default router;

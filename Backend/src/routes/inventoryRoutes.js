@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/trackexpirydate',trackExpiryDates),
 router.get('/checkmedicationavailablity',checkMedicationAvailability)
-router.get('/addorupdatemedication',authorizeRole('pharmacist'),addOrUpdateMedication)
+router.get('/addorupdatemedication',addOrUpdateMedication)
 
 
 export default router;

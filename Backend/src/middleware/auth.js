@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
 import User from "../model/userModel.js";
 import Patient from '../model/patientModel.js';
-import {generateToken} from '../util/jwt.js'
+import { generateToken } from '../util/jwt.js';
 import dotenv from "dotenv";
+
 dotenv.config();
+
 
 export const authenticateToken = async (req, res, next) => {
     const token = req.cookies.jwt; 
@@ -27,12 +29,25 @@ export const authenticateToken = async (req, res, next) => {
     }
 };
 
-export const authorizeRole = (role)=>{
-    return async(req,res,next)=>{
-        if(!role.includes(req.user.role)){
-            return res.status(404).json({message:"Access Denied"})
+export const authorizeRole = (roles) => {
+    return async (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({ message: "Access Denied" });
         }
         next();
-    }
-  
-}
+    };
+};
+
+export const checkPermission = (requiredPermission) => {
+    return async (req, res, next) => {
+        const userPermissions = req.user.permissions; 
+
+        if (!userPermissions || !userPermissions.includes(requiredPermission)) {
+            return res.status(403).json({ 
+                message: "You do not have the required permission to perform this action." 
+            });
+        }
+
+        next();
+    };
+};

@@ -2,8 +2,24 @@ import Admin  from "../model/adminmodel.js"
 import { logger } from "../config/logger.env.js";
 import User from "../model/userModel.js"
 import fs from 'fs';
+import dotenv from "dotenv";
+dotenv.config()
 import { parse } from 'json2csv';
 import { logAction } from "../config/logger.env.js"; 
+
+
+
+// export const firstAdminLogin = async(req,res)=>{
+//     const {name,email,password,role} = req.body
+//     try {
+//         const email = process.env.ADMIN_EMAIL;
+//         const password = process.env.ADMIN_PASSWORD;
+//         if(email !== email)
+//     } catch (error) {
+        
+//     }
+
+// }
 
 export const getAuditLog = async (req, res) => {
     const { startDate, endDate, actionType } = req.query;
