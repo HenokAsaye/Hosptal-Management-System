@@ -36,6 +36,18 @@ const PatientDashboard = () => {
             </div>
           </div>
 
+          {/* Card: Lab result */}
+          <div className={classes.card}>
+            <div>
+              <h3>Laboratory Result</h3>
+            </div>
+            <div>
+              <button>View</button>
+            </div>
+          </div>
+
+
+
           {/* Card: Notifications */}
           <div className={classes.card}>
             <div>

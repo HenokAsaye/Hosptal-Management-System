@@ -9,26 +9,31 @@ import inventoryroute from "./src/routes/inventoryRoutes.js";
 import labroute from "./src/routes/labRoute.js";
 import notificationroute from "./src/routes/notificationRoutes.js";
 import { authenticateToken } from "./src/middleware/auth.js";
+
 const app = express();
+
+// Corrected CORS configuration (only use one app.use(cors(...)))
 app.use(
   cors({
-    origin: 'http://localhost:3000', 
-    credentials: true, 
+    origin: 'http://localhost:3000', // Your frontend URL
+    credentials: true, // Allow credentials (cookies) to be sent
   })
 );
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({
-    origin:'http:localhost:3000'
-}))
-app.use(express.urlencoded({extended:true}))
-app.use("/auth",authRoute);
-app.use("/doctor",doctorroute);
-app.use("/patient",patientroute);
-app.use("/reception",receptionroute);
-app.use("/inventory",inventoryroute);
-app.use("lab",labroute);
-app.use("/notification",notificationroute)
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use("/auth", authRoute);
+app.use("/doctor", doctorroute);
+app.use("/patient", patientroute);
+app.use("/reception", receptionroute);
+app.use("/inventory", inventoryroute);
+app.use("/lab", labroute);
+app.use("/notification", notificationroute);
+
+// Token authentication middleware
 app.use(authenticateToken);
+
 export default app;
