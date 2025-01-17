@@ -16,26 +16,27 @@
 }
 
 .header {
-  color: #333;
-  padding: 10px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
 }
 
 .header h2 {
-  margin: 0;
-  font-size: 24px;
+  font-size: 20px;
+  color: #4a90e2;
 }
 
 .header span {
   font-size: 14px;
-  color: #666;
+  color: #333;
 }
 
 .form {
-  margin-top: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .formGroup {
@@ -43,10 +44,10 @@
 }
 
 label {
-  font-size: 14px;
   display: block;
-  margin-bottom: 5px;
-  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #555;
 }
 
 input,
@@ -59,20 +60,21 @@ select {
   box-sizing: border-box;
 }
 
-.searchInput {
-  display: flex;
-  align-items: center;
-  position: relative;
+.formButtons {
+  text-align: center;
 }
 
-.searchInput input {
-  flex: 1;
-  padding-right: 40px;
+.btnPrimary {
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.searchIcon {
-  position: absolute;
-  right: 10px;
-  font-size: 16px;
-  color: #777;
+.btnPrimary:hover {
+  background-color: #357abd;
 }

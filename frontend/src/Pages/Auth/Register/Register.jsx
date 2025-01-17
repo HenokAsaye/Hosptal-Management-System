@@ -190,7 +190,7 @@ const Register = () => {
                 </option>
                 <option value="doctor">Doctor</option>
                 <option value="nurse">Nurse</option>
-                <option value="lab_technician">Lab Technician</option>
+                <option value="lab-technician">Lab Technician</option>
                 <option value="receptionist">Receptionist</option>
                 <option value="pharmacist">Pharmacist</option>
               </select>

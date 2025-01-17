@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from "react";
 import Header from "../../../Components/Header/Header";
 import Sidebar from "../../../Components/Sidebar/Sidebar"; // Sidebar handles role-based links
@@ -54,12 +53,3 @@ const PatientDashboard = () => {
 };
 
 export default PatientDashboard;
-=======
-import React from 'react'
-
-function PatientDashboard() {
-  return <h1>Welcome to the Patient Dashboard!</h1>;
-}
-
-export default PatientDashboard
->>>>>>> master
