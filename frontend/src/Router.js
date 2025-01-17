@@ -6,7 +6,7 @@ import Register from "./Pages/Auth/Register/Register";
 import ForgetPassword from "./Pages/Auth/ForgetPassword/ForgetPassword";
 import ResetPassword from "./Pages/Auth/ResetPassword/ResetPassword";
 import Verify from "./Pages/Auth/Verify/Verify";
-import AdminDashboard from "./Pages/Admin/Dashboard/Dashboard";
+import AdminDashboard from "./Pages/Admin/AdminDashboard/AdminDashboard";
 import PatientDashboard from "./Pages/Patient/PatientDashboard/PatientDashboard";
 import DoctorDashboard from "./Pages/Doctor/DoctorDashboard/DoctorDashboard";
 import ReceptionDashboard from "./Pages/Receptionist/ReceptionDashboard/ReceptionDashboard";
@@ -24,6 +24,10 @@ import RegisterPatient from "./Pages/Receptionist/RegisterPatient/RegisterPatien
 import ScheduleAppointment from "./Pages/Receptionist/ScheduleAppointment/ScheduleAppointment";
 import CancelAppointment from "./Pages/Receptionist/CancelAppointment/CancelAppointment";
 import ValidatePayment from "./Pages/Receptionist/ValidatePayment/ValidatePayment";
+import PatientAppointment from "./Pages/Patient/PatientAppointment/PatientAppointment";
+import PatientNotification from "./Pages/Patient/PatientNotification/PatientNotificaton";
+import AuditLog from "./Pages/Admin/AuditLog/AuditLog"
+import Report from "./Pages/Admin/Report/Report";
 
 function Routering() {
   const { role, isLoading } = useRole(); // Use the role and loading state from context
@@ -76,10 +80,42 @@ function Routering() {
           }
         />
         <Route
+          path="/audit-logs"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AuditLog/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/generate-reports"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <Report/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/patient/dashboard"
           element={
             <ProtectedRoute requiredRole="patient">
               <PatientDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient-appointment"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientAppointment />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient-notification"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientNotification/>
             </ProtectedRoute>
           }
         />

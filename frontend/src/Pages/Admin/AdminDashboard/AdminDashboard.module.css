@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.layout {
+  display: flex;
+  flex: 1;
+}
+
+.main {
+  padding: 20px;
+  flex: 1;
+  background-color: #f4f4f4;
+}
+
+.main h2 {
+  margin-bottom: 20px;
+}
+
+.card {
+  background-color: #e3f2fd;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  width: 700px;
+}
+
+.card p {
+  margin-bottom: 5px;
+}
+
+button {
+  background-color: #2196f3;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1976d2;
+}

@@ -25,5 +25,6 @@ app.use("/inventory",inventoryroute);
 app.use("lab",labroute);
 app.use("/notification",notificationroute)
 app.use(authenticateToken);
-export default app;
 app.use("/admin", adminRoutes);
+export default app;
+
