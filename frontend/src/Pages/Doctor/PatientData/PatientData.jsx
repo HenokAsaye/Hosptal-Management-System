@@ -5,6 +5,7 @@ import classes from "./PatientData.module.css";
 import { FaSearch } from "react-icons/fa";
 
 const PatientData = () => {
+  
   return (
     <div>
       {/* Header Component */}

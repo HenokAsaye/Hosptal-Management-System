@@ -28,6 +28,8 @@ import PatientAppointment from "./Pages/Patient/PatientAppointment/PatientAppoin
 import PatientNotification from "./Pages/Patient/PatientNotification/PatientNotificaton";
 import AuditLog from "./Pages/Admin/AuditLog/AuditLog"
 import Report from "./Pages/Admin/Report/Report";
+import MedicationAvailability from "./Pages/Pharmacist/MedicationAvailability/MedicationAvailability";
+import Inventory from "./Pages/Pharmacist/Inventory/Inventory";
 
 function Routering() {
   const { role, isLoading } = useRole(); // Use the role and loading state from context
@@ -214,6 +216,22 @@ function Routering() {
           element={
             <ProtectedRoute requiredRole="pharmacist">
               <PharmaDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/medicine-availability"
+          element={
+            <ProtectedRoute requiredRole="pharmacist">
+              <MedicationAvailability />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/inventory-report"
+          element={
+            <ProtectedRoute requiredRole="pharmacist">
+              <Inventory />
             </ProtectedRoute>
           }
         />

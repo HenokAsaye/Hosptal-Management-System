@@ -3,8 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import classes from "./Login.module.css";
 import Loader from "../../../Components/Loader/Loader";
 import apiClient from "../../../lib/util";
-import { useRole } from "../../../context/roleContext";
+import { useRole } from "../../../context/roleContext"; // Use the updated context
 import Cookies from "js-cookie"; // Import js-cookie
+import { jwtDecode } from "jwt-decode";
+ // Import jwt-decode to decode the token
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -14,53 +16,64 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { setUserRole } = useRole(); // Using the setUserRole function from context
+  const { setUserRole } = useRole(); // Get setUserRole from context
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const response = await apiClient.post("/auth/login", formData);
-      console.log("API response:", response.data); // Check the response structure
-      const { user } = response.data; // Extract the user object
-      const role = user.role || "patient"; 
+  try {
+    const response = await apiClient.post("/auth/login", formData);
+    console.log("API response:", response); // Log the entire response object
 
-      // Store the role in the context
-      setUserRole(role);  // Set role in the RoleContext
+    const token = response.data.token || response.data.token; // Adjust if needed
+    console.log("Token:", token); // Log the token to see if it's extracted correctly
 
-      // Store the role in cookies
-      Cookies.set("userRole", role, { expires: 7, path: "/" }); 
-      console.log("Role stored in cookie:", Cookies.get("userRole")); // Debugging the cookie
-
-      // Navigate to the dashboard based on the role
-      if (role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (role === "patient") {
-        navigate("/patient/dashboard");
-      } else if (role === "doctor") {
-        navigate("/doctor/dashboard");
-      } else if (role === "nurse") {
-        navigate("/nurse/dashboard");
-      } else if (role === "pharmacist") {
-        navigate("/pharmacist/dashboard");
-      } else if (role === "laboratorist") {
-        navigate("/lab/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
-    } catch (error) {
-      console.error("Login failed:", error.message);
-      setError(error.response?.data?.message || "Login failed. Please try again.");
-    } finally {
-      setLoading(false); // Stop loading spinner
+    if (!token) {
+      throw new Error("Token not found in the response.");
     }
-  };
+
+    // Decode the JWT token to extract user info
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.id || decodedToken._id; // Adjust depending on the key in the decoded token
+    const role = decodedToken.role || "patient"; // Default to patient if role is not in the token
+
+    // Store the role and userId in the context and cookies
+    setUserRole(role); // Update context with role
+    Cookies.set("userRole", role, { expires: 7, path: "/" }); // Store role in cookie
+    Cookies.set("userId", userId, { expires: 7, path: "/" }); // Store userId in cookie
+
+    console.log("Role stored in cookie:", Cookies.get("userRole")); // Debugging the cookie
+    console.log("User ID stored in cookie:", Cookies.get("userId")); // Debugging the cookie
+
+    // Navigate to the appropriate dashboard based on the role
+    if (role === "admin") {
+      navigate("/admin/dashboard");
+    } else if (role === "patient") {
+      navigate("/patient/dashboard");
+    } else if (role === "doctor") {
+      navigate("/doctor/dashboard");
+    } else if (role === "nurse") {
+      navigate("/nurse/dashboard");
+    } else if (role === "pharmacist") {
+      navigate("/pharmacist/dashboard");
+    } else if (role === "laboratorist") {
+      navigate("/lab/dashboard");
+    } else {
+      navigate("/dashboard");
+    }
+  } catch (error) {
+    console.error("Login failed:", error.message);
+    setError(error.response?.data?.message || "Login failed. Please try again.");
+  } finally {
+    setLoading(false); // Stop loading spinner
+  }
+};
 
   return (
     <section className={classes.login}>

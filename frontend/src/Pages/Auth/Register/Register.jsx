@@ -3,13 +3,15 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import classes from "./Register.module.css";
 import apiClient from "../../../lib/util";
 import Cookies from "js-cookie"; // Import js-cookie
+import { useRole } from "../../../context/roleContext";
+import {jwtDecode} from "jwt-decode"; // Import jwt-decode to decode the token
 
 const Register = () => {
   const [searchParams] = useSearchParams();
   const userType = searchParams.get("type");
   const navigate = useNavigate();
+  const { setUserRole } = useRole(); // Get setUserRole from context
 
-  // Initialize form data with default values based on user type
   const [formData, setFormData] = useState(
     userType === "patient"
       ? {
@@ -46,10 +48,14 @@ const Register = () => {
       // Call the backend API to register the user
       const response = await apiClient.post("/auth/signup", formData);
 
-      console.log("Registration successful:", response.data);
+      // Log the entire response to see its structure
+      console.log("Registration response:", response);
 
-      // Store the role in a cookie for persistent access
-      Cookies.set("userRole", formData.role, { expires: 7 }); // Save role in the cookie
+      const token = response.data.token; // Assuming the backend returns a token
+      Cookies.set("token", token, { expires: 7 }); // Save token in cookie
+
+      const decodedToken = jwtDecode(token); // Decode the JWT token
+      setUserRole(decodedToken.role, decodedToken.userId); // Set role and userId in context
 
       // Redirect to the email verification page (if applicable)
       navigate("/verify-email", { state: { email: formData.email } });
@@ -73,7 +79,7 @@ const Register = () => {
               id="fullname"
               name="name"
               placeholder="Enter your full name"
-              value={formData.name} 
+              value={formData.name}
               onChange={handleInputChange}
               required
             />
@@ -85,7 +91,7 @@ const Register = () => {
               id="phone"
               name="contact"
               placeholder="Enter your phone number"
-              value={formData.contact}  
+              value={formData.contact}
               onChange={handleInputChange}
               required
             />

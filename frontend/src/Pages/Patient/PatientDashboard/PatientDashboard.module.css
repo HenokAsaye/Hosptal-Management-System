@@ -40,9 +40,43 @@
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .card button:hover {
+  background-color: #0056b3;
+}
+
+/* Specific button styles */
+.card .view__details__btn {
+  background-color: #28a745;
+}
+
+.card .view__details__btn:hover {
+  background-color: #218838;
+}
+
+.card .check__now__btn {
+  background-color: #ffc107;
+}
+
+.card .check__now__btn:hover {
+  background-color: #e0a800;
+}
+
+.card .view__records__btn {
+  background-color: #17a2b8;
+}
+
+.card .view__records__btn:hover {
+  background-color: #117a8b;
+}
+
+.card .view__lab__results__btn {
+  background-color: #007bff;
+}
+
+.card .view__lab__results__btn:hover {
   background-color: #0056b3;
 }
 
@@ -51,3 +85,18 @@
   color: #888;
   margin-left: 12px;
 }
+/* Specific Delete Button Style */
+.card .delete__btn {
+  background-color: #dc3545; /* Red color for delete action */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.card .delete__btn:hover {
+  background-color: #c82333; /* Darker red for hover effect */
+}
+
