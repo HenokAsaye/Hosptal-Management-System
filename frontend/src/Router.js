@@ -32,12 +32,12 @@ import MedicationAvailability from "./Pages/Pharmacist/MedicationAvailability/Me
 import Inventory from "./Pages/Pharmacist/Inventory/Inventory";
 
 function Routering() {
-  const { role, isLoading } = useRole(); // Use the role and loading state from context
+  const { role, isLoading } = useRole();
 
   const getDashboardPath = () => {
     if (!role) return "/login";
     switch (role) {
-      case "admin":
+      case "Admin":
         return "/admin/dashboard";
       case "patient":
         return "/patient/dashboard";
@@ -76,7 +76,7 @@ function Routering() {
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRole="Admin">
               <AdminDashboard />
             </ProtectedRoute>
           }
@@ -84,7 +84,7 @@ function Routering() {
         <Route
           path="/audit-logs"
           element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRole="Admin">
               <AuditLog/>
             </ProtectedRoute>
           }
@@ -92,7 +92,7 @@ function Routering() {
         <Route
           path="/generate-reports"
           element={
-            <ProtectedRoute requiredRole="admin">
+            <ProtectedRoute requiredRole="Admin">
               <Report/>
             </ProtectedRoute>
           }

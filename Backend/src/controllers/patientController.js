@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import { logger } from "../config/logger.env.js";
 dotenv.config();
 import mongoose from "mongoose";
+import { getSocketInstance } from "../service/socketService.js";
 
 export const checkMedicalHistory = async (req, res) => {
     const { patientId } = req.body;
@@ -38,7 +39,6 @@ export const checkMedicalHistory = async (req, res) => {
             });
         }
 
-        // Correctly count the total number of entries in medicalHistory using aggregation
         const totalEntries = await Patient.aggregate([
             { $match: { _id: user._id } },
             {
@@ -121,54 +121,58 @@ export const checkLabResult = async (req, res) => {
 export const patientNotification = async (req, res) => {
     const { patientId } = req.body;
     const { page = 1, limit = 10 } = req.query;
-
+  
     try {
-        logger.info("Fetching patient notifications", { patientId, page, limit });
-
-        const pageNum = parseInt(page, 10);
-        const limitNum = parseInt(limit, 10);
-
-        if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
-            logger.warn("Invalid pagination parameters", { page, limit });
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid Pagination Parameters',
-            });
-        }
-
-        const patientNotification = await Notification.aggregate([
-            { $match: { receiverId: patientId } },
-            { $sort: { createdAt: -1 } },
-            { $skip: (pageNum - 1) * limitNum },
-            { $limit: limitNum },
-            { $project: { type: 1, message: 1, scheduledtime: 1 } },
-        ]);
-
-        const totalNotification = await Notification.countDocuments({ receiverId: patientId });
-
-        logger.info("Notifications retrieved successfully", { patientId });
-        return res.status(200).json({
-            success: true,
-            message: 'Your Notifications are here!',
-            patientNotification,
-            pagination: {
-                currentPage: pageNum,
-                totalEntries: totalNotification,
-                totalPages: Math.ceil(totalNotification / limitNum),
-            },
+      logger.info("Fetching patient notifications", { patientId, page, limit });
+  
+      const pageNum = parseInt(page, 10);
+      const limitNum = parseInt(limit, 10);
+  
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+        logger.warn("Invalid pagination parameters", { page, limit });
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid Pagination Parameters',
         });
+      }
+  
+      const patientNotification = await Notification.aggregate([
+        { $match: { receiverId: patientId } },
+        { $sort: { createdAt: -1 } },
+        { $skip: (pageNum - 1) * limitNum },
+        { $limit: limitNum },
+        { $project: { type: 1, message: 1, scheduledtime: 1 } },
+      ]);
+  
+      const totalNotification = await Notification.countDocuments({ receiverId: patientId });
+  
+      logger.info("Notifications retrieved successfully", { patientId });
+
+      const io = getSocketInstance(); 
+      io.emit("new_notification", { patientId, notifications: patientNotification });
+  
+      return res.status(200).json({
+        success: true,
+        message: 'Your Notifications are here!',
+        patientNotification,
+        pagination: {
+          currentPage: pageNum,
+          totalEntries: totalNotification,
+          totalPages: Math.ceil(totalNotification / limitNum),
+        },
+      });
     } catch (error) {
-        logger.error("Error fetching notifications", { error });
-        return res.status(500).json({
-            success: false,
-            message: 'Internal Server Error',
-            error: error.message,
-        });
+      logger.error("Error fetching notifications", { error });
+      return res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: error.message,
+      });
     }
-};
+  };
 
 export const patientAppointment = async (req, res) => {
-    const { patientId } = req.body;
+    const { patientId } = req.query;
     const { page = 1, limit = 10 } = req.query;
 
     try {

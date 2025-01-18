@@ -8,7 +8,7 @@ export const generateToken = async (Id, res) => {
         process.env.JWT_SECRET
     );
     console.log(token)
-    res.cookie("jwt", token, {
+    res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
     });

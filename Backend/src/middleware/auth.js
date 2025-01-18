@@ -8,7 +8,7 @@ dotenv.config();
 
 
 export const authenticateToken = async (req, res, next) => {
-    const token = req.cookies.jwt;
+    const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: "Token is missing or invalid" });
     }

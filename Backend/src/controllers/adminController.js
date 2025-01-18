@@ -2,16 +2,12 @@ import Admin  from "../model/adminmodel.js"
 import { logger } from "../config/logger.env.js";
 import User from "../model/userModel.js";
 import Patient from "../model/patientModel.js";
-import User from "../model/userModel.js";
-import Patient from "../model/patientModel.js";
+
 import fs from 'fs';
 import dotenv from "dotenv";
-import bcrypt from "bcrypt";
 import mongoose from 'mongoose';
 import { SendAdminInvitationLink } from "../service/emailService.js"; 
 import bcrypt from "bcrypt";
-import mongoose from 'mongoose';
-import { SendAdminInvitationLink } from "../service/emailService.js"; 
 dotenv.config()
 import { parse } from 'json2csv';
 import { logAction } from "../config/logger.env.js"; 
@@ -77,7 +73,7 @@ export const inviteAdmin = async (req, res) => {
             return res.status(400).json({ message: "Failed to send invitation email." });
         }
 
-        const newAdmin = new Admin({ name, password, email, role: "admin" });
+        const newAdmin = new Admin({ name, password, email, role: "Admin" });
         console.log("Saving new admin:", newAdmin);
 
         await newAdmin.save();
