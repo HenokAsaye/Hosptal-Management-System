@@ -2,6 +2,10 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-image: url('../../../assets/images/patient-bg.avif'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .layout {
@@ -12,7 +16,8 @@
 .main {
   flex: 1;
   padding: 20px;
-  background-color: #f9f9f9;
+  background-color: rgba(226, 249, 255, 0.9); 
+  border-radius: 8px;
 }
 
 .card {
@@ -85,6 +90,7 @@
   color: #888;
   margin-left: 12px;
 }
+
 /* Specific Delete Button Style */
 .card .delete__btn {
   background-color: #dc3545; /* Red color for delete action */
@@ -99,4 +105,3 @@
 .card .delete__btn:hover {
   background-color: #c82333; /* Darker red for hover effect */
 }
-

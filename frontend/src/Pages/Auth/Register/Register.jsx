@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import classes from "./Register.module.css";
 import apiClient from "../../../lib/util";
-import Cookies from "js-cookie"; // Import js-cookie
+import Cookies from "js-cookie";
 import { useRole } from "../../../context/roleContext";
-import {jwtDecode} from "jwt-decode"; // Import jwt-decode to decode the token
+import {jwtDecode} from "jwt-decode"; // Correct import
+import backgroundImage from "../../../assets/images/login-bg.jpg"; // Import the image
 
 const Register = () => {
   const [searchParams] = useSearchParams();
   const userType = searchParams.get("type");
   const navigate = useNavigate();
-  const { setUserRole } = useRole(); // Get setUserRole from context
+  const { setUserRole } = useRole();
 
   const [formData, setFormData] = useState(
     userType === "patient"
@@ -23,14 +24,14 @@ const Register = () => {
           region: "",
           city: "",
           woreda: "",
-          role: "patient", // Fixed role for patients
+          role: "patient",
         }
       : {
           name: "",
           contact: "",
           email: "",
           password: "",
-          role: "", // Placeholder for non-patient roles
+          role: "",
         }
   );
 
@@ -43,21 +44,13 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      console.log("Form Data before sending:", formData);
-
-      // Call the backend API to register the user
       const response = await apiClient.post("/auth/signup", formData);
+      const token = response.data.token;
 
-      // Log the entire response to see its structure
-      console.log("Registration response:", response);
+      Cookies.set("token", token, { expires: 7 });
+      const decodedToken = jwtDecode(token);
 
-      const token = response.data.token; // Assuming the backend returns a token
-      Cookies.set("token", token, { expires: 7 }); // Save token in cookie
-
-      const decodedToken = jwtDecode(token); // Decode the JWT token
-      setUserRole(decodedToken.role, decodedToken.userId); // Set role and userId in context
-
-      // Redirect to the email verification page (if applicable)
+      setUserRole(decodedToken.role, decodedToken.userId);
       navigate("/verify-email", { state: { email: formData.email } });
     } catch (error) {
       console.error("Registration failed:", error.message || "Unknown error");
@@ -66,7 +59,10 @@ const Register = () => {
   };
 
   return (
-    <section className={classes.register}>
+    <section
+      className={classes.register}
+      style={{ backgroundImage: `url(${backgroundImage})` }} // Dynamically set the background
+    >
       <div className={classes.container}>
         <div className={classes.header}>
           <h1>Welcome To Zewditu Memorial Hospital</h1>
@@ -120,8 +116,6 @@ const Register = () => {
               required
             />
           </div>
-
-          {/* Conditionally render the address fields for patients */}
           {userType === "patient" && (
             <>
               <div className={classes.form__group}>
@@ -136,7 +130,6 @@ const Register = () => {
                   required
                 />
               </div>
-
               <div className={classes.address__group}>
                 <label>Address</label>
                 <div className={classes.address__fields}>
@@ -180,7 +173,6 @@ const Register = () => {
               </div>
             </>
           )}
-
           {userType !== "patient" && (
             <div className={classes.form__group}>
               <label htmlFor="role">Select Role</label>
@@ -202,7 +194,6 @@ const Register = () => {
               </select>
             </div>
           )}
-
           <div className={classes.footer__section}>
             <button type="submit" className={classes.register__btn}>
               Register {userType === "patient" ? "as Patient" : "as Other"}
