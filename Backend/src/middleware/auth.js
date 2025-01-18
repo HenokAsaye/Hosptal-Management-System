@@ -8,26 +8,36 @@ dotenv.config();
 
 
 export const authenticateToken = async (req, res, next) => {
-    const token = req.cookies.jwt; 
+    const token = req.cookies.jwt;
     if (!token) {
         return res.status(401).json({ message: "Token is missing or invalid" });
     }
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-        const user = await User.findById(decoded._id) || await Patient.findById(decoded._id);
-
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        let user = await Patient.findById(decoded._id);
+        if (!user) {
+            user = await User.findById(decoded._id);
+        }
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-
-        req.user = user; 
-        next(); 
+        console.log("Authenticated User:", user);
+        req.user = user;
+        if (!req.user.role) {
+            return res.status(403).json({
+                success: false,
+                message: "Role not found for this user"
+            });
+        }
+        console.log("req.user after attaching:", req.user);
+        next();
     } catch (err) {
         console.error("JWT Verification Error:", err.message);
         return res.status(401).json({ message: "Invalid or expired token" });
     }
 };
+
+
 
 export const authorizeRole = (roles) => {
     return async (req, res, next) => {

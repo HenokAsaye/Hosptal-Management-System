@@ -26,6 +26,11 @@ const patientSchema = new mongoose.Schema({
     verificationTokenExpiresAt: {
         type: Date
     },
+    role:{
+        type:String,
+        enum:['patient'],
+        required: true,
+    },
     isVerified: {
         type: Boolean,
         default: false
