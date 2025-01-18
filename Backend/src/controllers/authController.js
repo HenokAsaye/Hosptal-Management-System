@@ -140,40 +140,49 @@ export const login = async (req, res) => {
             user = await Admin.findOne({ email });
         }
         if (!user) {
-            return res.status(404).json({ 
-                success: false, 
-                message: `No account found for email ${email}` 
+            return res.status(404).json({
+                success: false,
+                message: `No account found for email ${email}`
             });
         }
+
+        console.log("User Data:", user); // Log user data to verify
+
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "Invalid email or password" 
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email or password"
             });
         }
+
+        // Log user role for further checking
+        console.log("User Role:", user.role);
+
         if (user.role !== "Admin" && !user.isVerified) {
-            return res.status(403).json({ 
-                success: false, 
-                message: "Please verify your email before logging in." 
+            return res.status(403).json({
+                success: false,
+                message: "Please verify your email before logging in."
             });
         }
+
         const token = await generateToken(user, res);
         logger.info(`User logged in: ${user.email}`);
         return res.status(200).json({
             success: true,
             message: "Logged in successfully",
             token,
-            user: { ...user._doc, password: undefined }, 
+            user: { ...user._doc, password: undefined },
         });
     } catch (error) {
         logger.error(`Error during login: ${error.message}`);
-        res.status(500).json({ 
-            success: false, 
-            message: "Internal server error" 
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
         });
     }
 };
+
 export const logOut = async(req,res)=>{
     res.clearCookie('token');
     return res.status(200).json({success:true,message:"SuccessFully LOgged Out"})

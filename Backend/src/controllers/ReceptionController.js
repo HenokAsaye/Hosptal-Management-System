@@ -10,7 +10,7 @@ dotenv.config();
 
 
 export const registerNewPatient = async (req, res) => {
-    const { name, email, password, role, region, city, woreda, age, contact } = req.body;
+    const { name, email, password,region, city, woreda, age, contact } = req.body;
     try {
         const existingUser = await Patient.findOne({ email }) 
             
@@ -46,6 +46,7 @@ export const registerNewPatient = async (req, res) => {
                 age,
                 contact,
                 address: { city, region, woreda },
+                role:"patient"
             };
             const newPatient = new Patient(patientData);
             await newPatient.save();
@@ -247,3 +248,75 @@ export const verifyPatientPayment = async (req, res) => {
         });
     }
 };
+
+
+
+
+export const getTodaysAppointments = async (req, res) => {
+  try {
+    // Get today's date (yyyy-mm-dd format) without the time
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Query to fetch appointments where timeSlot matches today's date
+    const appointments = await Appointment.find({
+      $expr: {
+        $eq: [
+          { $dateToString: { format: "%Y-%m-%d", date: "$timeSlot" } },
+          { $dateToString: { format: "%Y-%m-%d", date: today } },
+        ],
+      },
+    }).populate("patientId", "name email") // Populate patient details
+      .populate("doctorId", "name email"); // Populate doctor details
+
+    // Send a successful response with the data
+    return res.status(200).json({
+      success: true,
+      data: appointments,
+    });
+  } catch (error) {
+    console.error(`Error fetching today's appointments: ${error.message}`);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch today's appointments. Please try again later.",
+    });
+  }
+};
+
+
+
+export const getTodaysPatients = async (req, res) => {
+  try {
+    // Get the current date (without the time part)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Get the next day (exclusive upper bound for the date range)
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Fetch appointments with a timeSlot within today
+    const appointments = await Appointment.find({
+      timeSlot: { $gte: today, $lt: tomorrow },
+    }).populate({
+      path: "patientId",
+      select: "name", // Only fetch the patient's name
+    });
+
+    // Extract patient names from the populated appointments
+    const patientNames = appointments.map((appointment) => appointment.patientId.name);
+
+    res.status(200).json({
+      success: true,
+      message: "Fetched today's appointments successfully",
+      data: patientNames,
+    });
+  } catch (error) {
+    console.error("Error fetching today's appointments:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch today's appointments",
+    });
+  }
+};
+
