@@ -3,7 +3,7 @@ import {
     VERIFICATION_EMAIL_TEMPLATE,
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
-    cancelledAppointment,
+    cancelledAppointment, 
     invitationEmail
 } from "../util/mailTemplate.js";
 import dotenv from "dotenv";

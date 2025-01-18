@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {checkMedicalHistory,checkLabResult,patientAppointment,patientNotification,deleteAppointment,deleteNotification} from "../controllers/patientController.js";
-import { authorizeRole } from "../middleware/auth.js";
 const router = Router();
 
 

@@ -23,7 +23,6 @@ export const signup = async (req, res) => {
                 message: `Account already exists with email ${email}`,
             });
         }
-
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
         const emailSent = await sendVerificationEmail(email, verificationToken);
@@ -68,9 +67,9 @@ export const signup = async (req, res) => {
             token = await generateToken(newUser, res); 
             console.log(token)
         }
-
         return res.status(201).json({
             success: true,
+            token,
             token,
             message: "Account created successfully. Please verify your email.",
         });

@@ -54,7 +54,7 @@ Schedule Appointment</Link></li>
       case "nurse":
         return (
           <ul>
-            <li><Link to="/nurse-dashboard"><FaHome size={24} color="#4a90e2"  />Dashboard</Link></li>
+            
             <li><Link to="/getPatientData"><FaUser size={24} color="#4a90e2" />Patient</Link></li>
             <li><Link to="/medical-availability"><MdEventAvailable  size={24} color="#4a90e2"/>Medical Availability</Link></li>
           </ul>

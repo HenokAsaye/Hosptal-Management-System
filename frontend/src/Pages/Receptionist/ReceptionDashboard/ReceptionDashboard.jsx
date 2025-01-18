@@ -1,36 +1,120 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../../Components/Header/Header";
-import Sidebar from "../../../Components/Sidebar/Sidebar"; // Import the Sidebar component
-import classes from "./Receptionist.module.css"; // Assuming you have a CSS module for this component
+import Sidebar from "../../../Components/Sidebar/Sidebar"; // Sidebar handles role-based links
+import classes from "./Receptionist.module.css"; // CSS module for styling
+import apiClient from "../../../lib/util";
+import Loader from "../../../Components/Loader/Loader";
+import { useRole } from "../../../context/roleContext";
 
-function ReceptionDashboard() {
+const ReceptionDashboard = () => {
+  const { userId } = useRole(); // Get userId from context
+  const [appointments, setAppointments] = useState([]);
+  const [availableDoctors, setAvailableDoctors] = useState([]);
+  const [checkedInPatients, setCheckedInPatients] = useState([]);
+  const [loading, setLoading] = useState(false); // For general loading state
+  const [error, setError] = useState(null); // For error messages
+
+  // Fetch all data when the component mounts
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // Fetch today's appointments
+        const appointmentsResponse = await apiClient.get("/reception/appointments", {
+          params: { date: new Date().toISOString(), receptionistId: userId },
+        });
+
+        // Fetch available doctors
+        const doctorsResponse = await apiClient.get("/reception/availabledoctors", {
+          params: { receptionistId: userId },
+        });
+
+        // Fetch checked-in patients
+        const patientsResponse = await apiClient.get("/reception/checkedinpatients", {
+          params: { date: new Date().toISOString(), receptionistId: userId },
+        });
+
+        // Update state with data
+        setAppointments(appointmentsResponse.data.appointments || []);
+        setAvailableDoctors(doctorsResponse.data.doctors || []);
+        setCheckedInPatients(patientsResponse.data.patients || []);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Failed to load data. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div className={classes.container}>
       {/* Header Component */}
       <Header role="Receptionist" isLoggedIn={true} />
-      
+
       <div className={classes.main}>
-        
+        {/* Sidebar Component */}
         <Sidebar />
 
         {/* Content Section */}
         <div className={classes.content}>
+          {/* Card: Today's Appointments */}
           <div className={classes.card}>
-            <span>Today's Appointment:</span>
-            <span className={classes.count}>45</span>
+            <div>
+              <h3>Today's Appointments: {appointments.length}</h3>
+            </div>
+            {appointments.length > 0 && (
+              <div>
+                <button className={classes.view__details__btn}>View Details</button>
+                <span className={classes.date}>
+                  {new Date(appointments[0].timeSlot).toLocaleTimeString() || "N/A"}
+                </span>
+              </div>
+            )}
           </div>
+
+          {/* Card: Available Doctors */}
           <div className={classes.card}>
-            <span>Available Doctors:</span>
-            <span className={classes.count}>5</span>
+            <div>
+              <h3>Available Doctors: {availableDoctors.length}</h3>
+            </div>
+            {availableDoctors.length > 0 && (
+              <ul>
+                {availableDoctors.map((doctor, index) => (
+                  <li key={index}>{doctor.name}</li>
+                ))}
+              </ul>
+            )}
           </div>
+
+          {/* Card: Checked-in Patients */}
           <div className={classes.card}>
-            <span>Checked in Patients:</span>
-            <span className={classes.count}>23</span>
+            <div>
+              <h3>Checked-in Patients: {checkedInPatients.length}</h3>
+            </div>
+            {checkedInPatients.length > 0 && (
+              <ul>
+                {checkedInPatients.map((patient, index) => (
+                  <li key={index}>{patient.name}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default ReceptionDashboard;

@@ -1,39 +1,50 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import Cookies from "js-cookie"; 
+import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode"; // Corrected import for jwt-decode
 
 const RoleContext = createContext(null);
 
 export const RoleProvider = ({ children }) => {
   const [role, setRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    // Check if the role exists in the cookie on initial load
-    const storedRole = Cookies.get("userRole");
-    if (storedRole) {
-      setRole(storedRole); // Set the role from cookie
+    const token = Cookies.get("token");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setRole(decodedToken.role || null);
+        setUserId(decodedToken._id || null); // Use `_id` from the token
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setRole(null);
+        setUserId(null);
+      }
     }
   }, []);
 
-  // Function to update the user's role in state and cookie
-  const setUserRole = (newRole) => {
+  const setUserRole = (newRole, newUserId) => {
     setRole(newRole);
-    Cookies.set("userRole", newRole, { expires: 7 }); // Store the role in cookie for 7 days
+    setUserId(newUserId);
+    Cookies.set("userRole", newRole, { expires: 7 });
+    Cookies.set("userId", newUserId, { expires: 7 });
   };
 
-  // Function to clear the user's role from state and cookie
   const clearUserRole = () => {
     setRole(null);
-    Cookies.remove("userRole"); // Remove the role cookie
+    setUserId(null);
+    Cookies.remove("userRole");
+    Cookies.remove("userId");
+    Cookies.remove("token");
   };
 
   return (
-    <RoleContext.Provider value={{ role, setUserRole, clearUserRole }}>
+    <RoleContext.Provider value={{ role, userId, setUserRole, clearUserRole }}>
       {children}
     </RoleContext.Provider>
   );
 };
 
-// Custom hook to access the role context
 export const useRole = () => {
   return useContext(RoleContext);
 };
