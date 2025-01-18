@@ -13,9 +13,13 @@ import adminRoutes from "./src/routes/adminRoutes.js";
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.use(cors({
-    origin:'http:localhost:3000'
-}))
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Fix the typo
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true, // Allow cookies to be sent
+  })
+);
 app.use(express.urlencoded({extended:true}))
 app.use("/auth",authRoute);
 app.use("/doctor",doctorroute);
@@ -24,7 +28,7 @@ app.use("/reception",receptionroute);
 app.use("/inventory",inventoryroute);
 app.use("lab",labroute);
 app.use("/notification",notificationroute)
-app.use(authenticateToken);
 app.use("/admin", adminRoutes);
-export default app;
+app.use(authenticateToken);
 
+export default app;

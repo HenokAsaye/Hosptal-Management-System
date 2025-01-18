@@ -12,14 +12,14 @@ export const signup = async (req, res) => {
 
     try {
         const isPatient = !role || role === "patient";
-        const existingUser = isPatient 
-            ? await Patient.findOne({ email }) 
+        const existingUser = isPatient
+            ? await Patient.findOne({ email })
             : await User.findOne({ email });
 
         if (existingUser) {
-            return res.status(400).json({ 
-                success: false, 
-                message: `Account already exists with email ${email}` 
+            return res.status(400).json({
+                success: false,
+                message: `Account already exists with email ${email}`,
             });
         }
 
@@ -27,11 +27,12 @@ export const signup = async (req, res) => {
         const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
         const emailSent = await sendVerificationEmail(email, verificationToken);
         if (!emailSent) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "Invalid email address. Please try again." 
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email address. Please try again.",
             });
         }
+
         const userData = {
             name,
             email,
@@ -41,6 +42,7 @@ export const signup = async (req, res) => {
             isVerified: false,
         };
 
+        let token;
         if (isPatient) {
             const patientData = {
                 ...userData,
@@ -50,26 +52,29 @@ export const signup = async (req, res) => {
             };
             const newPatient = new Patient(patientData);
             await newPatient.save();
+            token = await generateToken(newPatient, res); 
         } else {
             if (!validRoles.includes(role)) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: "Invalid role selected" 
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid role selected",
                 });
             }
             const newUser = new User({ ...userData, role });
             await newUser.save();
+            token = await generateToken(newUser, res); 
         }
 
         return res.status(201).json({
             success: true,
+            token,
             message: "Account created successfully. Please verify your email.",
         });
     } catch (error) {
         logger.error(`Error during signup: ${error.message}`);
-        res.status(500).json({ 
-            success: false, 
-            message: "Internal server error" 
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
         });
     }
 };
@@ -132,7 +137,7 @@ export const login = async (req, res) => {
         }
 
         if (!user) {
-            return res.status(404).json({ success: false, message: `No account found for email ${email}` });
+            return res.status(404).json(`{ success: false, message: No account found for email ${email} }`);
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
@@ -144,7 +149,7 @@ export const login = async (req, res) => {
             return res.status(403).json({ success: false, message: "Please verify your email before logging in." });
         }
 
-        const token = generateToken(user,res);
+        const token = await generateToken(user,res);
 
         logger.info(`User logged in: ${user.email}`);
         return res.status(200).json({
@@ -158,7 +163,6 @@ export const login = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-
 export const logOut = async(req,res)=>{
     res.clearCookie('token');
     return res.status(200).json({success:true,message:"SuccessFully LOgged Out"})

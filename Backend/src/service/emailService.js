@@ -3,7 +3,7 @@ import {
     VERIFICATION_EMAIL_TEMPLATE,
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
-    cancelledAppointment
+    cancelledAppointment, invitationEmail
 } from "../util/mailTemplate.js";
 import dotenv from "dotenv";
 import {logger} from "../config/logger.env.js";
@@ -94,3 +94,21 @@ export const sendNotificationEmail = async(recipientEmail,doctorName,timeSlot)=>
         return false
     }
 }
+export const SendAdminInvitationLink = async (recipientEmail, adminPageUrl) => {
+    try {
+        console.log("Preparing to send email to:", recipientEmail);
+        console.log("Admin page URL for invitation:", adminPageUrl);
+        const htmlContent = invitationEmail.replace("{resetURL}", adminPageUrl);
+        console.log("Generated HTML content:", htmlContent);
+        const emailSent = await sendEmail({
+            to: recipientEmail,
+            subject: "Admin Invitation",
+            htmlContent,
+        });
+        console.log("Email sending result:", emailSent);
+        return emailSent;
+    } catch (error) {
+        console.error(`Failed to send admin invitation to ${recipientEmail}:`, error);
+        return false;
+    }
+};

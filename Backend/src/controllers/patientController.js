@@ -1,19 +1,18 @@
-import Patient  from "../model/patientModel.js";
-import labResult  from "../model/labResultModel.js";
-import Notification  from "../model/notificationModel.js";
+import Patient from "../model/patientModel.js";
+import labResult from "../model/labResultModel.js";
+import Notification from "../model/notificationModel.js";
 import Appointment from "../model/appointmentModel.js";
 import dotenv from "dotenv";
 import { logger } from "../config/logger.env.js";
+dotenv.config();
 import mongoose from "mongoose";
 
-dotenv.config();
-
 export const checkMedicalHistory = async (req, res) => {
-    const { Id } = req.body;
+    const { patientId } = req.body;
     const { page = 1, limit = 10 } = req.query;
 
     try {
-        logger.info("Fetching medical history", { patientId: Id, page, limit });
+        logger.info("Fetching medical history", { patientId, page, limit });
 
         const pageNum = parseInt(page, 10);
         const limitNum = parseInt(limit, 10);
@@ -26,44 +25,44 @@ export const checkMedicalHistory = async (req, res) => {
             });
         }
 
-        const startIndex = (pageNum - 1) * limitNum;
-        const user = await Patient.findById(Id, {
+        const user = await Patient.findById(patientId, {
             name: 1,
-            MedicalHistory: { $slice: [startIndex, limitNum] }
+            medicalHistory: { $slice: [(pageNum - 1) * limitNum, limitNum] }
         });
 
         if (!user) {
-            logger.warn("Patient not found", { patientId: Id });
+            logger.warn("Patient not found", { patientId });
             return res.status(404).json({
                 success: false,
                 message: "Patient not found"
             });
         }
 
-        if (String(Id) !== String(req.user.id)) {
-            logger.warn("Unauthorized access to medical history", { patientId: Id });
-            return res.status(403).json({
-                success: false,
-                message: "Access Denied: You are not eligible for this service"
-            });
-        }
-
+        // Correctly count the total number of entries in medicalHistory using aggregation
         const totalEntries = await Patient.aggregate([
             { $match: { _id: user._id } },
-            { $project: { total: { $size: "$MedicalHistory" } } }
+            {
+                $project: {
+                    total: {
+                        $size: { $ifNull: ["$medicalHistory", []] }
+                    }
+                }
+            }
         ]);
+
         const totalCount = totalEntries[0]?.total || 0;
 
-        logger.info("Medical history retrieved successfully", { patientId: Id });
+        logger.info("Medical history retrieved successfully", { patientId });
         return res.status(200).json({
             success: true,
-            MedicalHistory: user.MedicalHistory,
+            MedicalHistory: user.medicalHistory,
             message: `Here is your medical history, ${user.name}`,
             currentPage: pageNum,
-            totalPages: Math.ceil(totalCount / limitNum),
+            totalPages: totalCount > 0 ? Math.ceil(totalCount / limitNum) : 1,
             totalEntries: totalCount
         });
     } catch (error) {
+        console.error(error);
         logger.error("Error fetching medical history", { error });
         return res.status(500).json({
             success: false,
@@ -95,13 +94,8 @@ export const checkLabResult = async (req, res) => {
             .skip((pageNum - 1) * limitNum)
             .limit(limitNum);
 
-        if (!patientLabResult || patientId.toString() !== req.user.Id.toString()) {
-            logger.warn("Unauthorized access to lab results", { patientId });
-            return res.status(403).json({
-                success: false,
-                message: "You are not allowed to access this!"
-            });
-        }
+
+
         const totalLabResult = await labResult.countDocuments({ patientId });
         logger.info("Lab results retrieved successfully", { patientId });
         return res.status(200).json({
@@ -123,14 +117,12 @@ export const checkLabResult = async (req, res) => {
     }
 };
 
-
-
 export const patientNotification = async (req, res) => {
-    const { PatientId } = req.body;
+    const { patientId } = req.body;
     const { page = 1, limit = 10 } = req.query;
 
     try {
-        logger.info("Fetching patient notifications", { PatientId, page, limit });
+        logger.info("Fetching patient notifications", { patientId, page, limit });
 
         const pageNum = parseInt(page, 10);
         const limitNum = parseInt(limit, 10);
@@ -143,33 +135,17 @@ export const patientNotification = async (req, res) => {
             });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(PatientId)) {
-            logger.warn("Invalid Patient ID", { PatientId });
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid Patient ID',
-            });
-        }
-
-        if (PatientId.toString() !== req.user.id.toString()) {
-            logger.warn("Unauthorized access to notifications", { PatientId });
-            return res.status(403).json({
-                success: false,
-                message: 'You are not eligible for this service',
-            });
-        }
-
         const patientNotification = await Notification.aggregate([
-            { $match: { receiverId: PatientId } },
+            { $match: { receiverId: patientId } },
             { $sort: { createdAt: -1 } },
             { $skip: (pageNum - 1) * limitNum },
             { $limit: limitNum },
             { $project: { type: 1, message: 1, scheduledtime: 1 } },
         ]);
 
-        const totalNotification = await Notification.countDocuments({ receiverId: PatientId });
+        const totalNotification = await Notification.countDocuments({ receiverId: patientId });
 
-        logger.info("Notifications retrieved successfully", { PatientId });
+        logger.info("Notifications retrieved successfully", { patientId });
         return res.status(200).json({
             success: true,
             message: 'Your Notifications are here!',
@@ -195,37 +171,18 @@ export const patientAppointment = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
     try {
-        logger.info("Fetching patient appointments", { patientId, page, limit });
-
         const pageNum = parseInt(page, 10);
         const limitNum = parseInt(limit, 10);
 
         if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
-            logger.warn("Invalid pagination parameters", { page, limit });
             return res.status(400).json({
                 success: false,
                 message: "Invalid Pagination Parameters"
             });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(patientId)) {
-            logger.warn("Invalid Patient ID", { patientId });
-            return res.status(400).json({
-                success: false,
-                message: "Invalid Patient ID"
-            });
-        }
-
-        if (!patientId || patientId.toString() !== req.user.id.toString()) {
-            logger.warn("Unauthorized access to appointments", { patientId });
-            return res.status(403).json({
-                success: false,
-                message: "You are not eligible for this service"
-            });
-        }
-
         const patientAppointment = await Appointment.aggregate([
-            { $match: { patientId: mongoose.Types.ObjectId(patientId) } },
+            { $match: { patientId: new mongoose.Types.ObjectId(patientId) } },
             { $sort: { createdAt: -1 } },
             { $skip: (pageNum - 1) * limitNum },
             { $limit: limitNum },
@@ -237,12 +194,7 @@ export const patientAppointment = async (req, res) => {
                     as: "doctorName"
                 }
             },
-            {
-                $unwind: {
-                    path: "$doctorName",
-                    preserveNullAndEmptyArrays: true,
-                }
-            },
+            { $unwind: { path: "$doctorName", preserveNullAndEmptyArrays: true } },
             {
                 $project: {
                     timeSlot: 1,
@@ -252,17 +204,10 @@ export const patientAppointment = async (req, res) => {
             }
         ]);
 
-        if (!patientAppointment || patientAppointment.length === 0) {
-            logger.warn("No appointments found for patient", { patientId });
-            return res.status(404).json({
-                success: false,
-                message: "You don't have any appointments or patient not found"
-            });
-        }
 
         const totalAppointment = await Appointment.countDocuments({ patientId });
 
-        logger.info("Appointments retrieved successfully", { patientId });
+
         return res.status(200).json({
             success: true,
             message: "Here are your appointments",
@@ -274,7 +219,6 @@ export const patientAppointment = async (req, res) => {
             }
         });
     } catch (error) {
-        logger.error("Error fetching appointments", { error });
         return res.status(500).json({
             success: false,
             message: "Internal Server Error",
@@ -326,38 +270,32 @@ export const deleteAppointment = async (req, res) => {
     const { appointmentId, patientId } = req.body;
 
     try {
-        logger.info("Deleting appointment", { appointmentId, patientId });
-
         const appointment = await Appointment.findById(appointmentId);
         if (!appointment) {
-            logger.warn("Appointment not found", { appointmentId });
             return res.status(404).json({
                 success: false,
-                message: "Appointment not found!"
+                message: "Appointment not found"
             });
         }
 
         if (appointment.patientId.toString() !== patientId.toString()) {
-            logger.warn("Unauthorized access to delete appointment", { appointmentId, patientId });
             return res.status(403).json({
                 success: false,
-                message: "You are not eligible for this service"
+                message: "You are not authorized to delete this appointment"
             });
         }
 
         await Appointment.deleteOne({ _id: appointmentId });
 
-        logger.info("Appointment deleted successfully", { appointmentId });
         return res.status(200).json({
             success: true,
-            message: "Appointment deleted successfully!"
+            message: "Appointment deleted successfully"
         });
     } catch (error) {
-        logger.error("Error deleting appointment", { error });
         return res.status(500).json({
             success: false,
-            message: "Internal Server Error"
+            message: "Internal Server Error",
+            error: error.message
         });
     }
 };
-

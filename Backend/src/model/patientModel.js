@@ -16,6 +16,10 @@ const patientSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
+    role:{
+        type:String,
+        default:"patient"
+    },
     password: {
         type: String,
         required: true
