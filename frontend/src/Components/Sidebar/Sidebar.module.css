@@ -1,12 +1,14 @@
 /* Sidebar styles */
 .sidebar {
   width: 250px;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   padding: 20px;
   border-right: 1px solid #ddd;
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: 2px 0px 10px rgba(0, 0, 0, 0.1); /* Add shadow to the sidebar */
+  transition: transform 0.3s ease; /* Smooth slide effect for sidebar transitions */
 }
 
 .header {
@@ -15,49 +17,69 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 15px;
+  border-radius: 10px 10px 0 0; /* Rounded top corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow */
 }
 
 .header h1 {
   margin: 0;
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 600;
 }
 
 .userInfo {
-  background-color: #d9d9d9;
-  padding: 5px 10px;
-  border-radius: 20px;
+  background-color: #f1f1f1;
+  padding: 8px 12px;
+  border-radius: 25px;
   color: #333;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 nav ul {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 nav li {
-  margin: 10px 0;
+  margin: 12px 0;
 }
 
 nav a {
-  padding: 8px 16px;
+  padding: 10px 20px;
   text-decoration: none;
   font-weight: 600;
-  color: black;
-  transition: 0.3s;
+  color: #333;
   display: flex;
   align-items: center;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 nav a:hover {
-  background-color: #ddd;
-  border-radius: 4px;
+  background-color: #4a90e2;
+  color: white;
+  transform: translateX(5px); /* Adds slight movement for interaction */
 }
 
 nav a .icon {
-  margin-right: 10px;
-  font-size: 18px;
+  margin-right: 12px;
+  font-size: 20px;
 }
 
+nav a .icon:hover {
+  color: white; /* Change icon color on hover */
+}
 
+/* Additional styles for the links */
+nav a.active {
+  background-color: #4a90e2;
+  color: white;
+  font-weight: bold;
+}
+
+nav a.active .icon {
+  color: white;
+}

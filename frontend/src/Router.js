@@ -30,6 +30,8 @@ import AuditLog from "./Pages/Admin/AuditLog/AuditLog"
 import Report from "./Pages/Admin/Report/Report";
 import MedicationAvailability from "./Pages/Pharmacist/MedicationAvailability/MedicationAvailability";
 import Inventory from "./Pages/Pharmacist/Inventory/Inventory";
+import GetPatient from "./Pages/Nurse/GetPatient/Getpatient";
+import CheckMedication from "./Pages/Nurse/CheckMedication/CheckMedication";
 
 function Routering() {
   const { role, isLoading } = useRole();
@@ -208,6 +210,22 @@ function Routering() {
           element={
             <ProtectedRoute requiredRole="nurse">
               <NurseDashboard />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/getPatientData"
+          element={
+            <ProtectedRoute requiredRole="nurse">
+              <GetPatient />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/medical-availability"
+          element={
+            <ProtectedRoute requiredRole="nurse">
+              <CheckMedication />
             </ProtectedRoute>
           }
         />
