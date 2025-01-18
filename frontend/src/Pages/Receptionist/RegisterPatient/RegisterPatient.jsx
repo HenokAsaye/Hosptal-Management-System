@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import Header from "../../../Components/Header/Header"; 
-import Sidebar from "../../../Components/Sidebar/Sidebar"; 
-import classes from "./RegisterPatient.module.css"; 
+import Header from "../../../Components/Header/Header";
+import Sidebar from "../../../Components/Sidebar/Sidebar";
+import apiClient from "../../../lib/util"; // Ensure this path matches your file structure
+import classes from "./RegisterPatient.module.css";
 
 const RegisterPatient = () => {
   const [formData, setFormData] = useState({
@@ -20,29 +21,44 @@ const RegisterPatient = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted: ", formData);
-    // Add your submission logic here (e.g., API call)
+
+    try {
+      // Post request to the backend API to register a patient
+      const response = await apiClient.post("/reception/registerpatient", formData);
+
+      // Handling response from backend
+      if (response.data.success) {
+        alert(response.data.message);
+        setFormData({
+          name: "",
+          contact: "",
+          email: "",
+          password: "",
+          age: "",
+          region: "",
+          city: "",
+          woreda: "",
+        });
+      } else {
+        alert(response.data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert(error.response?.data?.message || "Failed to register patient.");
+    }
   };
 
   return (
     <div>
-      {/* Header Component */}
       <Header role="Receptionist" isLoggedIn={true} />
-
       <div className={classes.container}>
-        {/* Sidebar Component */}
         <Sidebar />
-
-        {/* Main Content */}
         <div className={classes.main}>
-          {/* Register Patient Title */}
           <div className={classes.formHeader}>
             <h2>Register Patient</h2>
           </div>
-
-          {/* Register Form */}
           <form className={classes.form} onSubmit={handleSubmit}>
             <div className={classes.formGroup}>
               <label htmlFor="name">Full Name</label>
@@ -92,8 +108,6 @@ const RegisterPatient = () => {
                 required
               />
             </div>
-
-            {/* Additional fields for age and address */}
             <div className={classes.formGroup}>
               <label htmlFor="age">Age</label>
               <input
@@ -147,8 +161,6 @@ const RegisterPatient = () => {
                 </div>
               </div>
             </div>
-
-            {/* Form Buttons */}
             <div className={classes.formButtons}>
               <button type="submit" className={classes.btnPrimary}>
                 Register Patient

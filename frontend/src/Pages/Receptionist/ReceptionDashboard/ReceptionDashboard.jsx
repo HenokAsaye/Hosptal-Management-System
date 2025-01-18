@@ -9,7 +9,6 @@ import { useRole } from "../../../context/roleContext";
 const ReceptionDashboard = () => {
   const { userId } = useRole(); // Get userId from context
   const [appointments, setAppointments] = useState([]);
-  const [availableDoctors, setAvailableDoctors] = useState([]);
   const [checkedInPatients, setCheckedInPatients] = useState([]);
   const [loading, setLoading] = useState(false); // For general loading state
   const [error, setError] = useState(null); // For error messages
@@ -25,20 +24,23 @@ const ReceptionDashboard = () => {
           params: { date: new Date().toISOString(), receptionistId: userId },
         });
 
-        // Fetch available doctors
-        const doctorsResponse = await apiClient.get("/reception/availabledoctors", {
-          params: { receptionistId: userId },
-        });
-
         // Fetch checked-in patients
         const patientsResponse = await apiClient.get("/reception/checkedinpatients", {
           params: { date: new Date().toISOString(), receptionistId: userId },
         });
 
-        // Update state with data
-        setAppointments(appointmentsResponse.data.appointments || []);
-        setAvailableDoctors(doctorsResponse.data.doctors || []);
-        setCheckedInPatients(patientsResponse.data.patients || []);
+        // Check if data exists before setting state
+        if (appointmentsResponse?.data?.data) {
+          setAppointments(appointmentsResponse.data.data);
+        } else {
+          setAppointments([]);
+        }
+
+        if (patientsResponse?.data?.data) {
+          setCheckedInPatients(patientsResponse.data.data);
+        } else {
+          setCheckedInPatients([]);
+        }
       } catch (err) {
         console.error("Error fetching data:", err);
         setError("Failed to load data. Please try again.");
@@ -78,26 +80,13 @@ const ReceptionDashboard = () => {
               <div>
                 <button className={classes.view__details__btn}>View Details</button>
                 <span className={classes.date}>
-                  {new Date(appointments[0].timeSlot).toLocaleTimeString() || "N/A"}
+                  {appointments[0]?.timeSlot
+                    ? new Date(appointments[0].timeSlot).toLocaleTimeString()
+                    : "N/A"}
                 </span>
               </div>
             )}
           </div>
-
-          {/* Card: Available Doctors */}
-          <div className={classes.card}>
-            <div>
-              <h3>Available Doctors: {availableDoctors.length}</h3>
-            </div>
-            {availableDoctors.length > 0 && (
-              <ul>
-                {availableDoctors.map((doctor, index) => (
-                  <li key={index}>{doctor.name}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
           {/* Card: Checked-in Patients */}
           <div className={classes.card}>
             <div>
@@ -106,7 +95,9 @@ const ReceptionDashboard = () => {
             {checkedInPatients.length > 0 && (
               <ul>
                 {checkedInPatients.map((patient, index) => (
-                  <li key={index}>{patient.name}</li>
+                  <li key={index}>
+                    {patient?.name || "Unknown Patient"} {/* Display patient name */}
+                  </li>
                 ))}
               </ul>
             )}
