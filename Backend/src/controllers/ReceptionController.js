@@ -293,41 +293,40 @@ export const verifyPatientPayment = async (req, res) => {
     }
 };
 
-
-
-
 export const getTodaysAppointments = async (req, res) => {
-  try {
-    // Get today's date (yyyy-mm-dd format) without the time
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+   try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    // Query to fetch appointments where timeSlot matches today's date
-    const appointments = await Appointment.find({
-      $expr: {
-        $eq: [
-          { $dateToString: { format: "%Y-%m-%d", date: "$timeSlot" } },
-          { $dateToString: { format: "%Y-%m-%d", date: today } },
-        ],
-      },
-    }).populate("patientId", "name email") // Populate patient details
-      .populate("doctorId", "name email"); // Populate doctor details
+      const appointments = await Appointment.find({
+         $expr: {
+            $eq: [
+               { $dateToString: { format: "%Y-%m-%d", date: "$timeSlot" } },
+               { $dateToString: { format: "%Y-%m-%d", date: today } },
+            ],
+         },
+      })
+      .populate("patientId", "name email")
+      .populate("doctorId", "name email");
 
-    // Send a successful response with the data
-    return res.status(200).json({
-      success: true,
-      data: appointments,
-    });
-  } catch (error) {
-    console.error(`Error fetching today's appointments: ${error.message}`);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch today's appointments. Please try again later.",
-    });
-  }
+      // Ensure no appointment is missing patient or doctor information
+      const validAppointments = appointments.filter(appointment => 
+         appointment.patientId && appointment.doctorId
+      );
+
+      return res.status(200).json({
+         success: true,
+         data: validAppointments,
+      });
+
+   } catch (error) {
+      console.error(`Error fetching today's appointments: ${error.message}`);
+      return res.status(500).json({
+         success: false,
+         message: "Failed to fetch today's appointments. Please try again later.",
+      });
+   }
 };
-
-
 
 export const getTodaysPatients = async (req, res) => {
   try {
@@ -347,8 +346,10 @@ export const getTodaysPatients = async (req, res) => {
       select: "name", // Only fetch the patient's name
     });
 
-    // Extract patient names from the populated appointments
-    const patientNames = appointments.map((appointment) => appointment.patientId.name);
+    // Ensure that patientId is not null and then map to get patient names
+    const patientNames = appointments
+      .filter(appointment => appointment.patientId !== null) // Filter out appointments with no patientId
+      .map((appointment) => appointment.patientId.name);
 
     res.status(200).json({
       success: true,
@@ -363,4 +364,3 @@ export const getTodaysPatients = async (req, res) => {
     });
   }
 };
-
