@@ -159,42 +159,86 @@ export const scheduleAppointment = async (req, res) => {
 };
 
 export const cancelSchedule = async (req, res) => {
-    const { doctorId, timeSlot } = req.query;
+    const { doctorName, appointmentId } = req.body; // Receive doctorName and appointmentId from the frontend
+    
     try {
-        const doctor = await User.findById(doctorId);
+        // Step 1: Find the doctor by their name
+        const doctor = await User.findOne({ name: doctorName });
         if (!doctor) {
             return res.status(404).json({
                 success: false,
-                message: "There is no Doctor Found"
+                message: `No doctor found with the name ${doctorName}`
             });
         }
-        const cancelledAppointments = await Appointment.find({
-            doctorId: doctorId,
-            timeSlot: timeSlot,
-            status: "scheduled"
-        });
-        if (!cancelledAppointments || cancelledAppointments.length === 0) {
+
+        // Step 2: Find the appointment by its ID
+        const appointment = await Appointment.findById(appointmentId);
+        if (!appointment) {
+            return res.status(404).json({
+                success: false,
+                message: `Appointment not found`
+            });
+        }
+
+        // Step 3: Verify the appointment belongs to the correct doctor and is scheduled
+        if (appointment.doctorId.toString() !== doctor._id.toString()) {
             return res.status(400).json({
                 success: false,
-                message: `There is no scheduled appointment with ${timeSlot} for Doctor ${doctor.name}`
+                message: `This appointment does not belong to Dr. ${doctorName}`
             });
         }
 
-        for (const appointment of cancelledAppointments) {
-            appointment.status = "cancelled";
-            await appointment.save();
-
-            const patient = await Patient.findById(appointment.patientId);
-            if (patient) {
-                await sendNotificationEmail(patient.email,doctor.name,timeSlot);
-            }
+        if (appointment.status !== "scheduled") {
+            return res.status(400).json({
+                success: false,
+                message: `This appointment is not in scheduled status and cannot be cancelled`
+            });
         }
+
+        // Step 4: Update the status of the appointment to "cancelled"
+        appointment.status = "cancelled";
+        await appointment.save();
+
+        // Step 5: Notify the patient via email
+        const patient = await Patient.findById(appointment.patientId);
+        if (patient) {
+            await sendNotificationEmail(patient.email, doctorName, appointment.timeSlot);
+        }
+
         return res.status(200).json({
             success: true,
-            message: "Appointments cancelled and patients notified successfully"
+            message: "Appointment cancelled and patient notified successfully"
         });
     } catch (error) {
-        console.error("Error cancelling appointments:", error);
+        console.error("Error cancelling appointment:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+};
+
+// Controller to search for appointments based on doctor's name and return them
+export const searchAppointmentsByDoctor = async (req, res) => {
+    const { doctorName } = req.query; // Receive doctorName from the frontend
+
+    try {
+        const doctor = await User.findOne({ name: doctorName });
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: `No doctor found with the name ${doctorName}`
+            });
+        }
+        const appointments = await Appointment.find({ doctorId: doctor._id, status: "scheduled" })
+            .populate("patientId", "name"); // Populate patientId to include patient name
+
+        return res.status(200).json({
+            success: true,
+            appointments
+        });
+    } catch (error) {
+        console.error("Error fetching appointments:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error"
