@@ -1,0 +1,88 @@
+/* Lab Result Page Styling */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensure full height of the viewport */
+  min-height: 100vh; /* Make sure it covers the whole viewport height */
+  background-image: linear-gradient(to bottom right, #4facfe, #00f2fe); /* Gradient background */
+  background-size: cover; /* Ensure the background covers the entire container */
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.layout {
+  display: flex;
+    flex-direction: row; /* Sidebar and Main Content side by side */
+    box-sizing: border-box;
+    height: 100vh; 
+    overflow-y: hidden;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+
+h2 {
+  text-align: center;
+  color: #333;
+  font-size: 20px; /* Reduced font size */
+  margin-bottom: 10px; /* Reduced margin */
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.formGroup {
+  margin-bottom: 15px; /* Reduced space between form elements */
+}
+
+.formGroup label {
+  font-size: 14px; /* Smaller label font */
+  color: #333;
+  margin-bottom: 6px; /* Reduced margin */
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 8px; /* Smaller padding */
+  font-size: 14px; /* Smaller font size */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.formGroup textarea {
+  resize: vertical;
+  height: 80px; /* Reduced height */
+}
+
+.submitBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px; /* Smaller padding */
+  font-size: 14px; /* Smaller font size */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitBtn:hover {
+  background-color: #0056b3;
+}
+
+.message {
+  text-align: center;
+  margin-top: 15px; /* Reduced margin */
+  color: #28a745;
+  font-weight: bold;
+}

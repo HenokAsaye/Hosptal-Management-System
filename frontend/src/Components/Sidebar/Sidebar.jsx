@@ -74,8 +74,7 @@ const Sidebar = () => {
       case "laboratorist":
         return (
           <ul>
-            <li><Link to="/lab-dashboard" className={location.pathname === "/lab-dashboard" ? classes.active : ""}><FaHome size={24} className="icon" /> Dashboard</Link></li>
-            <li><Link to="/lab-result" className={location.pathname === "/lab-result" ? classes.active : ""}><FaHandHoldingMedical size={24} className="icon" /> Laboratory Results</Link></li>
+            <li><Link to="/lab-dashboard" className={location.pathname === "/lab-dashboard" ? classes.active : ""}><FaHandHoldingMedical size={24} className="icon" /> Laboratory Results</Link></li>
           </ul>
         );
       default:

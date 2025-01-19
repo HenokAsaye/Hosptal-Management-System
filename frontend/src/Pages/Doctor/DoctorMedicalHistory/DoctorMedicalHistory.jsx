@@ -84,7 +84,7 @@ const DoctorMedicalHistory = () => {
         alert(response.data.message || "Failed to update medical history.");
       }
     } catch (error) {
-      alert("An error occurred while updating medical history.");
+      alert("Please note that payment is required for services received.");
     } finally {
       setLoading(false);
     }
@@ -112,6 +112,7 @@ const DoctorMedicalHistory = () => {
           </div>
 
           {error && <div className={classes.error}>{error}</div>}
+
 
           {patients.length > 0 && (
             <div className={classes.patientsList}>

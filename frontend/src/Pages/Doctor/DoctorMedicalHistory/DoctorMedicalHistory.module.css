@@ -113,3 +113,180 @@ button:disabled {
 button:hover {
   background-color: #0056b3;
 }
+/* Search Results Section */
+.patientsList {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.patientsList h3 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.patientsList ul {
+  list-style: none;
+  padding: 0;
+}
+
+.patientsList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.patientsList li:last-child {
+  border-bottom: none;
+}
+
+.patientsList li span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
+}
+
+.patientsList li button {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #1e8afe;
+  border-radius: 4px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.patientsList li button:hover {
+  background-color: #0056b3;
+}
+
+/* Medical History Section */
+.historySection {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f1f5ff;
+  border: 1px solid #c8d7ff;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.historySection h3 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #1e8afe;
+}
+
+.historyItem {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.historyItem p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.historyItem p strong {
+  font-weight: bold;
+  color: #555;
+}
+
+.historySection button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  background-color: #007bff;
+  border-radius: 4px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.historySection button:hover {
+  background-color: #0056b3;
+}
+
+/* Edit Medical History Form */
+.form {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #fdfdfd;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form h3 {
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+.form div {
+  margin-bottom: 15px;
+}
+
+.form label {
+  display: block;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.form input,
+.form textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  transition: border-color 0.2s;
+}
+
+.form input:focus,
+.form textarea:focus {
+  border-color: #1e8afe;
+  outline: none;
+}
+
+.form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #1e8afe;
+  border-radius: 6px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.form button:hover {
+  background-color: #0056b3;
+}
+
+.form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
