@@ -1,0 +1,76 @@
+/* Updated CSS to align the search input fields and button to the left */
+.container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column; /* Align items vertically */
+  align-items: flex-start; /* Align to the left */
+  margin-bottom: 20px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-start; /* Align search bar to the left */
+}
+
+.search input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 400px;
+}
+
+.search button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search button:hover {
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.resultsSection {
+  margin-top: 20px;
+}
+
+.resultItem {
+  background-color: white;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.resultItem p {
+  margin: 5px 0;
+}
+
+h3 {
+  color: #333;
+}

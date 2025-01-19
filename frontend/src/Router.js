@@ -35,6 +35,7 @@ import DoctorMedicalHistory from "./Pages/Doctor/DoctorMedicalHistory/DoctorMedi
 import PatientMedicalHistory from "./Pages/Patient/PatientMedicalHistory/PatientMedicalHistory";
 import InviteAdmin from "./Pages/Admin/InviteAdmin/InviteAdmin";
 import ManageUser from "./Pages/Admin/ManageUser/ManageUser";
+import DoctorLabResults from "./Pages/Doctor/DoctorLabResults/DoctorLabResults"
 
 function Routering() {
   const { role, isLoading } = useRole();
@@ -54,7 +55,7 @@ function Routering() {
         return "/nurse/dashboard";
       case "pharmacist":
         return "/pharmacist/dashboard";
-      case "laboratorist":
+      case "lab-technicial":
         return "/lab/dashboard";
       default:
         return "/login";
@@ -183,13 +184,21 @@ function Routering() {
           }
         />
         <Route
+          path="/doctor-labresults"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <DoctorLabResults /> 
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route
           path="/doctor-availability"
           element={
             <ProtectedRoute requiredRole="doctor">
               <Availability /> 
             </ProtectedRoute>
           }
-        />
+        /> */}
 
         <Route
           path="/reception/dashboard"
@@ -283,7 +292,7 @@ function Routering() {
         <Route
           path="/lab/dashboard"
           element={
-            <ProtectedRoute requiredRole="laboratorist">
+            <ProtectedRoute requiredRole="lab-technicial">
               <LabDashbord />
             </ProtectedRoute>
           }
