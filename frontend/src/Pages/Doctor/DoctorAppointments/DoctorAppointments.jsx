@@ -29,7 +29,7 @@ const DoctorAppointments = () => {
       }
 
       try {
-        const response = await apiClient.get(`/api/appointments?doctorId=${doctorId}`);
+        const response = await apiClient.get(`/doctor/getappointments?doctorId=${doctorId}`);
         setAppointments(response.data.data || []);
       } catch (err) {
         if (err.response && err.response.status === 404) {

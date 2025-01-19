@@ -9,6 +9,8 @@ const CancelAppointment = () => {
   const [doctorName, setDoctorName] = useState(""); // State for doctor's name
   const [appointments, setAppointments] = useState([]); // State for appointments list
   const [message, setMessage] = useState(""); // State for displaying messages
+  const [isSearching, setIsSearching] = useState(false); // State to track if a search has been made
+  const [hasSearched, setHasSearched] = useState(false); // State to track if the user has made a search
 
   // Handle search by doctor name
   const handleSearch = async (e) => {
@@ -20,6 +22,10 @@ const CancelAppointment = () => {
       return;
     }
 
+    setIsSearching(true); // Indicate that the search is in progress
+    setMessage(""); // Clear previous messages
+    setHasSearched(true); // Set that the user has searched
+
     try {
       // Send request to get appointments based on doctor name
       const response = await apiClient.get("/reception/search", {
@@ -29,13 +35,16 @@ const CancelAppointment = () => {
       // If success, set appointments data
       if (response.data.success) {
         setAppointments(response.data.appointments);
-        setMessage("");
       } else {
+        setAppointments([]); // Clear previous appointments if no results
         setMessage(response.data.message || "No appointments found.");
       }
     } catch (error) {
       console.error("Error fetching appointments:", error);
+      setAppointments([]); // Clear previous appointments if there's an error
       setMessage("Failed to fetch appointments.");
+    } finally {
+      setIsSearching(false); // Reset the searching state
     }
   };
 
@@ -60,6 +69,7 @@ const CancelAppointment = () => {
       setMessage("Failed to cancel appointment.");
     }
   };
+
   return (
     <div>
       {/* Header Component */}
@@ -91,7 +101,9 @@ const CancelAppointment = () => {
           {message && <div className={classes.message}>{message}</div>}
 
           {/* Display Appointments */}
-          {appointments.length > 0 ? (
+          {isSearching ? (
+            <p>Loading appointments...</p>
+          ) : hasSearched && appointments.length > 0 ? (
             <div>
               {appointments.map((appointment) => (
                 <div
@@ -109,9 +121,9 @@ const CancelAppointment = () => {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : hasSearched ? (
             <p>No appointments found for this doctor.</p>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
