@@ -57,38 +57,6 @@ const PatientDashboard = () => {
     fetchData();
   }, [appointmentsPage, notificationsPage, userId]);
 
-  // Fetch medical history when the "View Records" button is clicked
-  const handleViewMedicalHistory = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get("/patient/checkmedicalhistory", {
-        params: { patientId: userId, limit: 10 },
-      });
-      setMedicalHistory(response?.MedicalHistory || []);
-    } catch (err) {
-      console.error("Error fetching medical history:", err);
-      setError("Failed to load medical history. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch lab results when the "View Lab Results" button is clicked
-  const handleViewLabResults = async () => {
-    try {
-      setLoading(true);
-      const response = await apiClient.get("/patient/checklabresult", {
-        params: { patientId: userId, limit: 10 },
-      });
-      setLabResults(response.labResult|| []);
-    } catch (err) {
-      console.error("Error fetching lab results:", err);
-      setError("Failed to load lab results. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // Handle delete functionality for appointments and notifications
   const handleDeleteItem = async (id, type) => {
     try {
@@ -149,7 +117,6 @@ const PatientDashboard = () => {
             </div>
             {appointments.length > 0 && (
               <div>
-                <button className={classes.view__details__btn}>View Details</button>
                 <span className={classes.date}>{appointments[0].timeSlot || "N/A"}</span>
                 {/* Delete Button */}
                 <button className={classes.delete__btn} onClick={() => handleDeleteItem(appointments[0].id, "appointment")}>Delete</button>
@@ -163,20 +130,14 @@ const PatientDashboard = () => {
           {/* Card: Medical History */}
           <div className={classes.card}>
             <div>
-              <h3>Medical History</h3>
-            </div>
-            <div>
-              <button onClick={handleViewMedicalHistory}>View Records</button>
+              <h3>Medical History: {medicalHistory.length} records</h3>
             </div>
           </div>
 
           {/* Card: Lab Results */}
           <div className={classes.card}>
             <div>
-              <h3>Laboratory Result</h3>
-            </div>
-            <div>
-              <button onClick={handleViewLabResults}>View</button>
+              <h3>Lab Results: {labResults.length} result(s)</h3>
             </div>
           </div>
 
@@ -187,7 +148,6 @@ const PatientDashboard = () => {
             </div>
             {notifications.length > 0 && (
               <div>
-                <button className={classes.check__now__btn}>Check Now</button>
                 <span className={classes.date}>
                   {new Date(notifications[0].scheduledtime).toLocaleDateString() || "N/A"}
                 </span>

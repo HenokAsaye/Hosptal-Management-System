@@ -3,17 +3,17 @@ import Header from "../../../Components/Header/Header";
 import Sidebar from "../../../Components/Sidebar/Sidebar";
 import classes from "./PatientNotification.module.css";
 import { io } from "socket.io-client";
-import apiClient from "../../../lib/util";  // Import the API client
-import Cookies from "js-cookie";  // Import js-cookie to manage cookies
+import apiClient from "../../../lib/util";
+import Cookies from "js-cookie";
 
-const socket = io("http://localhost:5000"); // Connect to the backend socket server
+const socket = io("http://localhost:5000");
 
 const PatientNotification = () => {
-  const [notifications, setNotifications] = useState([]); // Store notifications in state
-  const [patientId, setPatientId] = useState(null); // State to store the patient ID
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0); // Track unread notifications count
+  const [patientId, setPatientId] = useState(null);
 
   useEffect(() => {
-    // Get patientId from cookies
     const patientIdFromCookie = Cookies.get("userId");
 
     if (!patientIdFromCookie) {
@@ -21,58 +21,62 @@ const PatientNotification = () => {
       return;
     }
 
-    setPatientId(patientIdFromCookie); // Set the patientId in state
+    setPatientId(patientIdFromCookie);
 
-    // Fetch existing notifications from the backend when the component mounts
     const fetchNotifications = async () => {
       try {
         const response = await apiClient.get(`/patient/patientnotification`, {
-          params: { page: 1, limit: 10, patientId: patientIdFromCookie }, // Correct API request structure
+          params: { page: 1, limit: 10, patientId: patientIdFromCookie },
         });
-        setNotifications(response.data.patientNotification);
+        const patientNotifications = response.data.patientNotification;
+        setNotifications(patientNotifications);
+        // Set unread count based on notifications that are not marked as sent
+        const unreadNotifications = patientNotifications.filter(
+          (notification) => !notification.sent
+        );
+        setUnreadCount(unreadNotifications.length);
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
     };
 
-    // Fetch notifications on first render
     fetchNotifications();
 
-    // Join the socket room for this patient
     socket.emit("join", patientIdFromCookie);
 
-    // Listen for new notifications from the server
     socket.on("new_notification", (data) => {
       if (data.patientId === patientIdFromCookie) {
-        // Update notifications when a new one arrives
         setNotifications((prevNotifications) => [
           ...prevNotifications,
           ...data.notifications,
         ]);
+        // Update unread notifications count
+        const unreadNotifications = data.notifications.filter(
+          (notification) => !notification.sent
+        );
+        setUnreadCount((prevCount) => prevCount + unreadNotifications.length);
       }
     });
 
-    // Cleanup the socket event listener when the component unmounts
     return () => {
       socket.off("new_notification");
     };
-  }, [patientId]); // Add patientId as a dependency to trigger re-run when it changes
+  }, [patientId]);
 
   const markAsRead = () => {
     alert("All notifications marked as read!");
     // You can implement the backend API call to mark notifications as read if needed.
+    setUnreadCount(0); // Reset unread notifications count
   };
 
   return (
     <div>
-      {/* Header Component */}
       <Header role="patient" isLoggedIn={true} />
 
       <div className={classes.container}>
-        {/* Sidebar Component */}
-        <Sidebar />
+        {/* Pass unreadCount to Sidebar */}
+        <Sidebar unreadCount={unreadCount} />
 
-        {/* Main Content */}
         <div className={classes.main}>
           <div className={classes.notificationsHeader}>
             <h2>Notifications</h2>
@@ -81,7 +85,6 @@ const PatientNotification = () => {
             </button>
           </div>
 
-          {/* Notification List */}
           {notifications.length > 0 ? (
             notifications.map((notification) => (
               <div className={classes.notificationItem} key={notification.id}>

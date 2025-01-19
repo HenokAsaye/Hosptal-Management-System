@@ -32,6 +32,7 @@ import Inventory from "./Pages/Pharmacist/Inventory/Inventory";
 import GetPatient from "./Pages/Nurse/GetPatient/Getpatient";
 import CheckMedication from "./Pages/Nurse/CheckMedication/CheckMedication";
 import DoctorMedicalHistory from "./Pages/Doctor/DoctorMedicalHistory/DoctorMedicalHistory";
+import PatientMedicalHistory from "./Pages/Patient/PatientMedicalHistory/PatientMedicalHistory";
 
 function Routering() {
   const { role, isLoading } = useRole();
@@ -104,6 +105,14 @@ function Routering() {
           element={
             <ProtectedRoute requiredRole="patient">
               <PatientDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient-medicalHistory"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientMedicalHistory />
             </ProtectedRoute>
           }
         />
