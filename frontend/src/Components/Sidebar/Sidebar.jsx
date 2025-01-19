@@ -34,7 +34,6 @@ const Sidebar = () => {
             <li><Link to="/patient-data" className={location.pathname === "/patient-data" ? classes.active : ""}><FaUser size={24} className="icon" /> Patient Data</Link></li>
             <li><Link to="/doctor-appointments" className={location.pathname === "/doctor-appointments" ? classes.active : ""}><FaCalendarAlt size={24} className="icon" /> Appointments</Link></li>
              <li><Link to="/doctor-medicalHistory" className={location.pathname === "/doctor-medicalHistory" ? classes.active : ""}><FaBookMedical size={24} className="icon" /> Medical History</Link></li>
-            <li><Link to="/doctor-availability" className={location.pathname === "/doctor-availability" ? classes.active : ""}><MdEventAvailable size={24} className="icon" /> Availability</Link></li>
           </ul>
         );
       case "Admin":

@@ -177,7 +177,7 @@ export const countAllUsers = async (req, res) => {
   };
   
 
-export const updateUserDetails = async (req, res) => {
+  export const updateUserDetails = async (req, res) => {
     const { userId, name, email, role } = req.body;
 
     try {
@@ -185,28 +185,27 @@ export const updateUserDetails = async (req, res) => {
             { $match: { _id: new mongoose.Types.ObjectId(userId) } },
             {
                 $unionWith: {
-                    coll: 'patients',  // The name of the Patient collection
-                    pipeline: [
-                        { $match: { _id: new mongoose.Types.ObjectId(userId) } },
-                    ],
+                    coll: 'patients',
+                    pipeline: [{ $match: { _id: new mongoose.Types.ObjectId(userId) } }],
                 },
             },
             {
                 $unionWith: {
-                    coll: 'admins',  
-                    pipeline: [
-                        { $match: { _id: new mongoose.Types.ObjectId(userId) } },
-                    ],
+                    coll: 'admins',
+                    pipeline: [{ $match: { _id: new mongoose.Types.ObjectId(userId) } }],
                 },
             },
         ]);
+
         if (!user || user.length === 0) {
-            return res.status(404).json({ message: "User not found in any collection." });
+            return res.status(404).json({ success: false, message: "User not found in any collection." });
         }
+
         const userToUpdate = user[0];
         userToUpdate.name = name || userToUpdate.name;
         userToUpdate.email = email || userToUpdate.email;
         userToUpdate.role = role || userToUpdate.role;
+
         if (userToUpdate.__t === 'Patient') {
             await Patient.findByIdAndUpdate(userToUpdate._id, userToUpdate);
         } else if (userToUpdate.__t === 'Admin') {
@@ -216,15 +215,15 @@ export const updateUserDetails = async (req, res) => {
         }
 
         return res.status(200).json({
+            success: true,
             message: "User details updated successfully.",
             user: userToUpdate,
         });
     } catch (error) {
-        logger.error("Error updating user details:", error); 
-        return res.status(500).json({ message: "Internal server error while updating user details.", error });
+        logger.error("Error updating user details:", error);
+        return res.status(500).json({ success: false, message: "Internal server error.", error });
     }
 };
-
 
 export const getAuditLog = async (req, res) => {
     const { startDate, endDate, actionType } = req.query;

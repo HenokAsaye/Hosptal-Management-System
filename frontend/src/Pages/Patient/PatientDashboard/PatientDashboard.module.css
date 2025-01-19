@@ -1,11 +1,10 @@
+/* Enhanced Styling for Patient Dashboard */
 .container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-image: url('../../../assets/images/patient-bg.avif'); 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: linear-gradient(to bottom right, #f0fdf4, #d1fae5);
+  font-family: "Roboto", sans-serif; /* Updated font */
 }
 
 .layout {
@@ -15,93 +14,109 @@
 
 .main {
   flex: 1;
-  padding: 20px;
-  background-color: rgba(226, 249, 255, 0.9); 
-  border-radius: 8px;
+  padding: 40px;
+  margin: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.card {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+h1 {
+  text-align: center;
+  font-size: 36px;
+  color: #0ea5e9;
+  margin-bottom: 30px;
+  font-weight: bold;
 }
 
-.card h3 {
-  margin: 0;
+.intro {
   font-size: 18px;
-  color: #333;
+  color: #0f172a; /* Intro font color */
+  margin-bottom: 24px;
+  line-height: 1.8;
+  text-align: center;
 }
 
-.card button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+.servicesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Increased min-width for spacing */
+  gap: 30px; /* More space between cards */
+  padding: 0;
+  list-style-type: none;
+}
+
+.servicesList li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px; /* Increased padding for more space */
+  background: #e0f7fa;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-.card button:hover {
-  background-color: #0056b3;
+.servicesList li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-/* Specific button styles */
-.card .view__details__btn {
-  background-color: #28a745;
+.servicesList li span {
+  font-size: 32px; /* Increased size for a more balanced look */
+  color: #00796b;
+  margin-bottom: 18px; /* Increased space below the icon */
 }
 
-.card .view__details__btn:hover {
-  background-color: #218838;
+.servicesList li p {
+  font-size: 18px; /* Increased text size for readability */
+  color: #0f172a; /* Matching font color to intro */
+  text-align: center;
+  line-height: 1.6; /* Increased line-height for better spacing */
+  margin-top: 10px; /* Added margin for spacing */
 }
 
-.card .check__now__btn {
-  background-color: #ffc107;
+.note {
+  font-size: 16px;
+  color: #1e293b;
+  margin-top: 30px;
+  text-align: center;
+  line-height: 1.6;
+  font-style: italic;
 }
 
-.card .check__now__btn:hover {
-  background-color: #e0a800;
-}
-
-.card .view__records__btn {
-  background-color: #17a2b8;
-}
-
-.card .view__records__btn:hover {
-  background-color: #117a8b;
-}
-
-.card .view__lab__results__btn {
-  background-color: #007bff;
-}
-
-.card .view__lab__results__btn:hover {
-  background-color: #0056b3;
-}
-
-.card .date {
-  font-size: 14px;
-  color: #888;
-  margin-left: 12px;
-}
-
-/* Specific Delete Button Style */
-.card .delete__btn {
-  background-color: #dc3545; /* Red color for delete action */
-  color: white;
+/* Add hover animations to buttons or clickable items */
+button {
+  background-color: #0ea5e9;
+  color: #fff;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 12px 24px; /* Slightly larger button */
+  border-radius: 10px;
+  font-size: 18px; /* Increased font size */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.card .delete__btn:hover {
-  background-color: #c82333; /* Darker red for hover effect */
+button:hover {
+  background-color: #0284c7;
+}
+
+/* Sidebar icons adjustment */
+.sidebar {
+  background: linear-gradient(to bottom, #0ea5e9, #0369a1);
+  color: white;
+}
+
+.sidebar a {
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 18px; /* Adjusted padding */
+  display: block;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+  background-color: #0284c7;
 }

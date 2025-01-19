@@ -3,6 +3,8 @@
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  font-family: 'Poppins', sans-serif; /* Softer and modern font */
+  background-color: #f0f8ff; /* Light blue background for a calming effect */
 }
 
 .layout {
@@ -12,38 +14,66 @@
 
 .main {
   flex: 1;
-  padding: 20px;
+  padding: 40px;
   background-color: #ffffff;
-  overflow-y: auto;
+  overflow-y: auto; /* Allows vertical scrolling */
+  max-height: calc(100vh - 80px); /* Ensures the main content is scrollable */
 }
 
 .card {
-  background-color: #eef3ff;
-  padding: 20px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 30px;
+  margin-bottom: 30px;
+  border-radius: 15px; /* Rounded corners */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px); /* Hover effect for interactivity */
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15); /* More shadow on hover */
 }
 
 .card h3 {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
+  color: #1d4ed8; /* Soft blue color for headings */
+  font-weight: bold;
+}
+
+.card p {
+  font-size: 1.1rem;
+  color: #374151; /* Dark grey text for better readability */
+  margin-top: 15px;
+  line-height: 1.6;
+}
+
+.card ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.card ul li {
+  margin-bottom: 10px;
 }
 
 .card button {
-  background-color: #4689e5;
+  background-color: #1d4ed8;
   color: white;
   border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 10px;
   cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
 }
 
 .card button:hover {
-  background-color: #3b76c2;
+  background-color: #2563eb; /* Slightly darker shade of blue */
 }
 
 .date {

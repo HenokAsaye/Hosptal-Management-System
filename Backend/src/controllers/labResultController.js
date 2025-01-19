@@ -5,11 +5,10 @@ import { logger } from "../config/logger.env.js";
 import { v4 as uuidv4 } from 'uuid'; 
 export const createLabResult = async (req, res) => {
     const { patientEmail, testName, resultDetails, technicianId, approvedBy, isViewAllowed } = req.body;
-
     try {
         const patient = await Patient.findOne({email:patientEmail});
         if (!patient) {
-            logger.warn(`Patient with ID ${patientId} not found.`);
+            logger.warn(`Patient with Email ${patientEmail} not found.`);
             return res.status(404).json({ success: false, message: "Patient not found" });
         }
         const technician = await User.findById(technicianId);
@@ -18,14 +17,14 @@ export const createLabResult = async (req, res) => {
             return res.status(404).json({ success: false, message: "Technician not found" });
         }
         const resultId = uuidv4();
-        const existingResult = await labResult.findOne({ PatientId: patientId, testName: testName });
+        const existingResult = await labResult.findOne({ PatientId: patient._id, testName: testName });
         if (existingResult) {
-            logger.warn(`Duplicate lab result found for patient ${patientId} and test ${testName}.`);
+            logger.warn(`Duplicate lab result found for patient ${patient._id} and test ${testName}.`);
             return res.status(400).json({ success: false, message: "Lab result already exists for this patient and test" });
         }
         const newLabResult = new labResult({
             resultId,
-            PatientId:patient.id,
+            PatientId:patient._id,
             testName,
             resultDetails,
             technicianId,
@@ -35,7 +34,7 @@ export const createLabResult = async (req, res) => {
             updatedAt: new Date(),
         });
         await newLabResult.save();
-        logger.info(`Lab result created successfully for patient ${patientId} and test ${testName}.`);
+        logger.info(`Lab result created successfully for patient ${patient._id} and test ${testName}.`);
         return res.status(201).json({
             success: true,
             message: "Lab result created successfully",

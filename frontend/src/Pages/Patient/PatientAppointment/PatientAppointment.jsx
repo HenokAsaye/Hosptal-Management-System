@@ -2,18 +2,20 @@ import React, { useEffect, useState } from "react";
 import Header from "../../../Components/Header/Header";
 import Sidebar from "../../../Components/Sidebar/Sidebar";
 import classes from "./PatientAppointment.module.css";
-import apiClient from "../../../lib/util"; // Import your apiClient
-import Cookies from "js-cookie"; // Import Cookies to access the patientId from cookies
+import apiClient from "../../../lib/util";
+import Cookies from "js-cookie";
 
 const PatientAppointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1); // For pagination
+  const limit = 10; // Number of appointments per page
 
-  // Fetch appointments when component mounts
+  // Fetch appointments when the component mounts or page changes
   useEffect(() => {
     const fetchAppointments = async () => {
-      const patientId = Cookies.get("userId"); // Get the patientId from cookies
+      const patientId = Cookies.get("userId");
 
       if (!patientId) {
         setError("No patient ID found.");
@@ -22,15 +24,14 @@ const PatientAppointment = () => {
       }
 
       try {
-        // Make GET request to fetch appointments with patientId as a query parameter
+        // Pass `page` and `limit` for pagination
         const response = await apiClient.get("/patient/patientappointment", {
-          params: { patientId }, // Pass the patientId in the query parameters
+          params: { patientId, page, limit },
         });
 
         if (response.data.success) {
-          // Log the appointments data to verify the response
-          console.log("Fetched Appointments:", response.data.appointments);
-          setAppointments(response.data.appointments);
+          console.log("Fetched Appointments:", response.data.data);
+          setAppointments(response.data.data); // Access `data` instead of `appointments`
         } else {
           setError("Failed to fetch appointments.");
         }
@@ -42,7 +43,7 @@ const PatientAppointment = () => {
     };
 
     fetchAppointments();
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
+  }, [page]); // Re-run when the page changes
 
   if (loading) {
     return <div>Loading...</div>;
@@ -54,34 +55,42 @@ const PatientAppointment = () => {
 
   return (
     <div>
-      {/* Header Component */}
       <Header role="patient" isLoggedIn={true} />
 
       <div className={classes.container}>
-        {/* Sidebar Component */}
         <Sidebar />
 
-        {/* Main Content */}
         <div className={classes.main}>
           <div className={classes.appointmentHeader}>
             <h2>Appointments</h2>
           </div>
 
-          {/* Appointment List */}
           {appointments.length > 0 ? (
             <div className={classes.appointmentList}>
               {appointments.map((appointment, index) => (
                 <div className={classes.appointmentItem} key={index}>
-                  <div className={classes.date}>{appointment.date}</div>
-                  <p>{appointment.timeSlot}</p>
+                  <div className={classes.date}>{appointment.date || "N/A"}</div>
+                  <p>{appointment.timeSlot || "N/A"}</p>
                   <p>Doctor: {appointment.doctorName}</p>
-                  <p>For: {appointment.reason}</p>
+                  <p>For: {appointment.reason || "N/A"}</p>
                 </div>
               ))}
             </div>
           ) : (
             <p>No appointments available.</p>
           )}
+
+          {/* Pagination Controls */}
+          <div className={classes.pagination}>
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+            >
+              Previous
+            </button>
+            <span>Page {page}</span>
+            <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
+          </div>
         </div>
       </div>
     </div>
