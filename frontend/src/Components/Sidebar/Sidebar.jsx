@@ -34,9 +34,12 @@ const Sidebar = () => {
             <li><Link to="/patient-data" className={location.pathname === "/patient-data" ? classes.active : ""}><FaUser size={24} className="icon" /> Patient Data</Link></li>
             <li><Link to="/doctor-appointments" className={location.pathname === "/doctor-appointments" ? classes.active : ""}><FaCalendarAlt size={24} className="icon" /> Appointments</Link></li>
              <li><Link to="/doctor-medicalHistory" className={location.pathname === "/doctor-medicalHistory" ? classes.active : ""}><FaBookMedical size={24} className="icon" /> Medical History</Link></li>
+<<<<<<< HEAD
              <li><Link to="/doctor-labresults" className={location.pathname === "/doctor-labresults" ? classes.active : ""}><FaHandHoldingMedical size={24} className="icon" /> Laboratory results </Link></li>
 
             {/* <li><Link to="/doctor-availability" className={location.pathname === "/doctor-availability" ? classes.active : ""}><MdEventAvailable size={24} className="icon" /> Availability</Link></li> */}
+=======
+>>>>>>> b7c83dce5e0c49b76a9c9abc169f9026158458a8
           </ul>
         );
       case "Admin":

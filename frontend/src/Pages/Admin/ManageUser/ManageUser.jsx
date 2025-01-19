@@ -8,6 +8,7 @@ const ManageUser = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [updateFormVisible, setUpdateFormVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Fetch all users
   useEffect(() => {
@@ -15,7 +16,7 @@ const ManageUser = () => {
       try {
         const response = await apiClient.get("/admin/users");
         const { users, patients, Admins } = response.data;
-        setUsers([...users, ...patients, ...Admins]); // Consolidate all users
+        setUsers([...users, ...patients, ...Admins]);
       } catch (error) {
         console.error("Error fetching users:", error.message);
       }
@@ -26,6 +27,9 @@ const ManageUser = () => {
 
   // Delete a user
   const handleDelete = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    setLoading(true);
     try {
       const response = await apiClient.delete(`/admin/delete-User?userId=${userId}`);
       if (response.data.success) {
@@ -35,6 +39,8 @@ const ManageUser = () => {
     } catch (error) {
       console.error("Error deleting user:", error.message);
       alert("An error occurred while deleting the user.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,16 +60,11 @@ const ManageUser = () => {
   const handleUpdate = async () => {
     if (!selectedUser) return;
 
+    setLoading(true);
     try {
       const response = await apiClient.put("/admin/user", {
         userId: selectedUser._id,
-        name: selectedUser.name,
-        email: selectedUser.email,
-        role: selectedUser.role,
-        age: selectedUser.age,
-        contact: selectedUser.contact,
-        PaymentStatus: selectedUser.PaymentStatus,
-        address: selectedUser.address,
+        ...selectedUser,
       });
 
       if (response.data.success) {
@@ -72,19 +73,21 @@ const ManageUser = () => {
             user._id === selectedUser._id
               ? {
                   ...user,
-                  ...response.data.user, // Update all fields from the backend response
+                  ...response.data.user, // Update fields from backend
                 }
               : user
           )
         );
 
         alert(response.data.message || "User updated successfully");
-        setUpdateFormVisible(false); // Hide the form
-        setSelectedUser(null); // Clear selected user
+        setUpdateFormVisible(false);
+        setSelectedUser(null);
       }
     } catch (error) {
       console.error("Error updating user:", error.message);
       alert("An error occurred while updating the user.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,8 +127,9 @@ const ManageUser = () => {
                         <button
                           className={classes.deleteButton}
                           onClick={() => handleDelete(user._id)}
+                          disabled={loading}
                         >
-                          Delete
+                          {loading ? "Loading..." : "Delete"}
                         </button>
                       </td>
                     </tr>
@@ -140,7 +144,7 @@ const ManageUser = () => {
           </div>
 
           {/* Update Form */}
-          {updateFormVisible && (
+          {updateFormVisible && selectedUser && (
             <div className={classes.overlay}>
               <div className={classes.updateForm}>
                 <h3>Update User</h3>
@@ -192,16 +196,15 @@ const ManageUser = () => {
                     >
                       <option value="Doctor">Doctor</option>
                       <option value="Patient">Patient</option>
-                      <option value="nurse">Nurse</option>
-                      <option value="receptionist">Receptionist</option>
+                      <option value="Nurse">Nurse</option>
+                      <option value="Receptionist">Receptionist</option>
                       <option value="Pharmacist">Pharmacist</option>
-                      <option value="laboratorist">Laboratorist</option>
+                      <option value="Laboratorist">Laboratorist</option>
                     </select>
                   </div>
-                  
-    
-                  <button type="submit" className={classes.saveButton}>
-                    Save
+
+                  <button type="submit" className={classes.saveButton} disabled={loading}>
+                    {loading ? "Saving..." : "Save"}
                   </button>
                   <button
                     type="button"

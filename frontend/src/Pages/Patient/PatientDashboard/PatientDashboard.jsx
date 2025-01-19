@@ -1,164 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Header from "../../../Components/Header/Header";
-import Sidebar from "../../../Components/Sidebar/Sidebar"; // Sidebar handles role-based links
-import classes from "./PatientDashboard.module.css"; // CSS module for styling
-import apiClient from "../../../lib/util";
-import Loader from "../../../Components/Loader/Loader";
-import { useRole } from "../../../context/roleContext";
+import Sidebar from "../../../Components/Sidebar/Sidebar";
+import classes from "./PatientDashboard.module.css";
 
 const PatientDashboard = () => {
-  const { userId } = useRole(); // Get userId from context
-  const [appointments, setAppointments] = useState([]);
-  const [notifications, setNotifications] = useState([]);
-  const [labResults, setLabResults] = useState([]);
-  const [medicalHistory, setMedicalHistory] = useState([]);
-  const [loading, setLoading] = useState(false); // For general loading state
-  const [error, setError] = useState(null); // For error messages
-  const [hasMoreAppointments, setHasMoreAppointments] = useState(true);
-  const [hasMoreNotifications, setHasMoreNotifications] = useState(true);
-  const [appointmentsPage, setAppointmentsPage] = useState(1);
-  const [notificationsPage, setNotificationsPage] = useState(1);
-
-  // Fetch all data when the component mounts
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch upcoming appointments
-        const appointmentsResponse = await apiClient.get("/patient/patientappointment", {
-          params: { page: appointmentsPage, limit: 5, patientId: userId }, // Limit to 5 appointments
-        });
-
-        // Fetch notifications
-        const notificationsResponse = await apiClient.get("/patient/patientnotification", {
-          params: { page: notificationsPage, limit: 5, patientId: userId }, // Limit to 5 notifications
-        });
-
-        // Fetch lab results
-        const labResultsResponse = await apiClient.get("/patient/checklabresult", {
-          params: { page: 1, limit: 5, patientId: userId },
-        });
-
-        // Update state with data
-        setAppointments(appointmentsResponse.data.appointments || []);
-        setNotifications(notificationsResponse.data.patientNotification || []);
-        setLabResults(labResultsResponse.data.labResult || []);
-        setHasMoreAppointments(appointmentsResponse.data.hasMore);
-        setHasMoreNotifications(notificationsResponse.data.hasMore);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load data. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [appointmentsPage, notificationsPage, userId]);
-
-  // Handle delete functionality for appointments and notifications
-  const handleDeleteItem = async (id, type) => {
-    try {
-      setLoading(true);
-      const url = `/patient/${type}/${id}`;
-      await apiClient.delete(url, { params: { patientId: userId } });
-      
-      // Update state after deletion
-      if (type === "appointment") {
-        setAppointments((prev) => prev.filter(item => item.id !== id));
-      } else if (type === "notification") {
-        setNotifications((prev) => prev.filter(item => item.id !== id));
-      }
-    } catch (err) {
-      console.error("Error deleting item:", err);
-      setError("Failed to delete item. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Load more appointments or notifications
-  const loadMoreAppointments = () => {
-    if (hasMoreAppointments) {
-      setAppointmentsPage(prev => prev + 1);
-    }
-  };
-
-  const loadMoreNotifications = () => {
-    if (hasMoreNotifications) {
-      setNotificationsPage(prev => prev + 1);
-    }
-  };
-
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
   return (
     <div className={classes.container}>
-      {/* Header Component */}
       <Header role="Patient" isLoggedIn={true} />
-
       <div className={classes.layout}>
-        {/* Sidebar Component */}
         <Sidebar />
-
-        {/* Main Content */}
         <div className={classes.main}>
-          {/* Card: Upcoming Appointments */}
-          <div className={classes.card}>
-            <div>
-              <h3>Upcoming Appointments: {appointments.length} Scheduled</h3>
-            </div>
-            {appointments.length > 0 && (
-              <div>
-                <span className={classes.date}>{appointments[0].timeSlot || "N/A"}</span>
-                {/* Delete Button */}
-                <button className={classes.delete__btn} onClick={() => handleDeleteItem(appointments[0].id, "appointment")}>Delete</button>
-              </div>
-            )}
-            {hasMoreAppointments && (
-              <button onClick={loadMoreAppointments}>Load More Appointments</button>
-            )}
-          </div>
-
-          {/* Card: Medical History */}
-          <div className={classes.card}>
-            <div>
-              <h3>Medical History: {medicalHistory.length} records</h3>
-            </div>
-          </div>
-
-          {/* Card: Lab Results */}
-          <div className={classes.card}>
-            <div>
-              <h3>Lab Results: {labResults.length} result(s)</h3>
-            </div>
-          </div>
-
-          {/* Card: Notifications */}
-          <div className={classes.card}>
-            <div>
-              <h3>Notifications: {notifications.length} unread</h3>
-            </div>
-            {notifications.length > 0 && (
-              <div>
-                <span className={classes.date}>
-                  {new Date(notifications[0].scheduledtime).toLocaleDateString() || "N/A"}
-                </span>
-                {/* Delete Button */}
-                <button className={classes.delete__btn} onClick={() => handleDeleteItem(notifications[0].id, "notification")}>Delete</button>
-              </div>
-            )}
-            {hasMoreNotifications && (
-              <button onClick={loadMoreNotifications}>Load More Notifications</button>
-            )}
-          </div>
+          <h1 className={classes.welcomeMessage}>Welcome to Zewditu Memorial Hospital!</h1>
+          <p className={classes.intro}>
+            Dear patient, we are delighted to have you at Zewditu Memorial Hospital. Our goal is to provide you with top-quality healthcare services tailored to your needs. Here, you can:
+          </p>
+          <ul className={classes.servicesList}>
+            <li>
+              <strong>View Your Medical History:</strong> Access detailed records of your past consultations, diagnoses, treatments, and prescriptions in one place, ensuring you are always informed about your health.
+            </li>
+            <li>
+              <strong>Check Your Lab Results:</strong> Get timely updates on your laboratory test results with detailed explanations, helping you understand your health status better.
+            </li>
+            <li>
+              <strong>Book and View Appointments:</strong> Schedule consultations with our expert medical professionals at your convenience, and keep track of upcoming or past appointments with ease.
+            </li>
+            <li>
+              <strong>Receive Notifications and Updates:</strong> Stay informed about important hospital updates, upcoming appointments, and personalized health reminders to ensure you never miss critical information.
+            </li>
+          </ul>
+          <p className={classes.note}>
+            If you encounter any issues or have questions about the services, please feel free to contact the reception desk located at the hospital entrance. Our friendly staff will be happy to assist you with your concerns or guide you to the appropriate department. 
+          </p>
+          <p className={classes.note}>
+            Use the sidebar to navigate through the dashboard and access the various services available to you. Thank you for choosing Zewditu Memorial Hospital for your healthcare needs. We are committed to ensuring your experience here is both pleasant and effective.
+          </p>
         </div>
       </div>
     </div>
