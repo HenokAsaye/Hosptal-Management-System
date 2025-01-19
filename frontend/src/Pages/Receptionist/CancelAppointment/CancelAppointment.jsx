@@ -15,7 +15,7 @@ const CancelAppointment = () => {
     e.preventDefault();
 
     // Validate that doctorName is not empty
-    if (!doctorName) {
+    if (!doctorName.trim()) {
       setMessage("Doctor name is required.");
       return;
     }
@@ -31,7 +31,7 @@ const CancelAppointment = () => {
         setAppointments(response.data.appointments);
         setMessage("");
       } else {
-        setMessage(response.data.message);
+        setMessage(response.data.message || "No appointments found.");
       }
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -42,15 +42,15 @@ const CancelAppointment = () => {
   // Handle cancel appointment
   const handleCancel = async (appointmentId) => {
     try {
-      // Send request to cancel the appointment
-      const response = await apiClient.post("/reception/cancel", {
-        doctorName,
-        appointmentId,
+      const response = await apiClient.delete(`/reception/cancel`, {
+        data: {
+          doctorName,
+          appointmentId,
+        },
       });
-
-      // If cancellation is successful, update the appointments list
+  
       if (response.data.success) {
-        setAppointments(appointments.filter((appointment) => appointment._id !== appointmentId)); // Remove cancelled appointment
+        setAppointments(appointments.filter((appointment) => appointment._id !== appointmentId));
         setMessage("Appointment cancelled and patient notified.");
       } else {
         setMessage(response.data.message);
@@ -60,7 +60,6 @@ const CancelAppointment = () => {
       setMessage("Failed to cancel appointment.");
     }
   };
-
   return (
     <div>
       {/* Header Component */}
@@ -99,7 +98,6 @@ const CancelAppointment = () => {
                   key={appointment._id}
                   style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "10px" }}
                 >
-                  <p>Doctor: {appointment.doctorId.name}</p>
                   <p>Patient: {appointment.patientId.name}</p>
                   <p>Time Slot: {new Date(appointment.timeSlot).toLocaleString()}</p>
                   <button

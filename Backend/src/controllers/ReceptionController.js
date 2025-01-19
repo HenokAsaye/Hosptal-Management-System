@@ -111,9 +111,10 @@ export const verifyEmail = async (req, res) => {
 
 
 export const scheduleAppointment = async (req, res) => {
-    const { patientId, doctorId, reason, timeSlot } = req.body;
+    const { patientId, doctorName, reason, timeSlot } = req.body;
 
     try {
+        // Find the patient by ID
         const patient = await Patient.findById(patientId);
         if (!patient) {
             return res.status(404).json({ 
@@ -121,27 +122,34 @@ export const scheduleAppointment = async (req, res) => {
                 message: "Patient not found" 
             });
         }
-        const doctor = await User.findById(doctorId);
+
+        // Find the doctor by name
+        const doctor = await User.findOne({ name: doctorName, role: "doctor" });
         if (!doctor) {
             return res.status(404).json({ 
                 success: false, 
                 message: "Doctor not found" 
             });
         }
+
+        // Validate that the time slot is in the future
         if (new Date(timeSlot) <= new Date()) {
             return res.status(400).json({
                 success: false,
                 message: "Time slot must be in the future",
             });
         }
+
+        // Create a new appointment
         const newAppointment = new Appointment({
             patientId,
-            doctorId,
+            doctorId: doctor._id,
             reason,
             timeSlot,
             status: "scheduled",
         });
 
+        // Save the new appointment
         await newAppointment.save();
 
         return res.status(201).json({
@@ -163,7 +171,7 @@ export const cancelSchedule = async (req, res) => {
     
     try {
         // Step 1: Find the doctor by their name
-        const doctor = await User.findOne({ name: doctorName });
+        const doctor = await User.findOne({ name: doctorName,role:"doctor" });
         if (!doctor) {
             return res.status(404).json({
                 success: false,
@@ -217,19 +225,21 @@ export const cancelSchedule = async (req, res) => {
         });
     }
 };
-
-// Controller to search for appointments based on doctor's name and return them
 export const searchAppointmentsByDoctor = async (req, res) => {
-    const { doctorName } = req.query; // Receive doctorName from the frontend
+    const { doctorName } = req.query; 
 
     try {
-        const doctor = await User.findOne({ name: doctorName });
+        const doctor = await User.findOne({ 
+            name: { $regex: new RegExp(doctorName, "i") }, 
+            role: "doctor" 
+        });
         if (!doctor) {
             return res.status(404).json({
                 success: false,
                 message: `No doctor found with the name ${doctorName}`
             });
         }
+
         const appointments = await Appointment.find({ doctorId: doctor._id, status: "scheduled" })
             .populate("patientId", "name"); // Populate patientId to include patient name
 
@@ -245,6 +255,7 @@ export const searchAppointmentsByDoctor = async (req, res) => {
         });
     }
 };
+
 
 export const verifyPatientPayment = async (req, res) => {
     const { patientId } = req.query;

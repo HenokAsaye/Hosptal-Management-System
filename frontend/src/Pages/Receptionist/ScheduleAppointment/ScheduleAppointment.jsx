@@ -7,7 +7,7 @@ import apiClient from "../../../lib/util";
 const ScheduleAppointment = () => {
   const [formData, setFormData] = useState({
     patientId: "",
-    doctorId: "",
+    doctorName: "", // Updated to match backend
     date: "",
     time: "",
     reason: "",
@@ -23,7 +23,7 @@ const ScheduleAppointment = () => {
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
     // Combine date and time into a single timeSlot
     const timeSlot = `${formData.date}T${formData.time}`;
@@ -31,17 +31,17 @@ const ScheduleAppointment = () => {
     try {
       const response = await apiClient.post("/reception/scheduleappointment", {
         patientId: formData.patientId,
-        doctorId: formData.doctorId,
+        doctorName: formData.doctorName,
         reason: formData.reason,
         timeSlot,
       });
 
       // Show success message and clear form
-      setResponseMessage("Appointment created successfully!");
+      setResponseMessage(response.data.message || "Appointment created successfully!");
       setError("");
       setFormData({
         patientId: "",
-        doctorId: "",
+        doctorName: "",
         date: "",
         time: "",
         reason: "",
@@ -52,9 +52,7 @@ const ScheduleAppointment = () => {
         setResponseMessage("");
       }, 3000);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Failed to schedule appointment."
-      );
+      setError(err.response?.data?.message || "Failed to schedule appointment.");
       setResponseMessage("");
     }
   };
@@ -118,14 +116,14 @@ const ScheduleAppointment = () => {
               />
             </div>
             <div className={classes.formGroup}>
-              <label htmlFor="doctor-id">Doctor ID</label>
+              <label htmlFor="doctor-name">Doctor Name</label>
               <input
                 type="text"
-                id="doctor-id"
-                name="doctorId"
-                placeholder="Enter Doctor ID"
+                id="doctor-name"
+                name="doctorName"
+                placeholder="Enter Doctor Name"
                 className={classes.input}
-                value={formData.doctorId}
+                value={formData.doctorName}
                 onChange={handleChange}
                 required
               />
