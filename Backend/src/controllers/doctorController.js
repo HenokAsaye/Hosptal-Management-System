@@ -74,61 +74,39 @@ export const editPatientMedicalHistory = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-export const scheduleAppointment = async (req, res) => {
-    const { patientEmail, doctorEmail, reason, timeSlot } = req.body;
+
+
+export const fetchDoctorAppointments = async (req, res) => {
     try {
-        const appointmentDate = new Date(timeSlot);
-        if (!isValid(appointmentDate) || !isFuture(appointmentDate)) {
-            logger.warn(`Invalid or past time slot provided: '${timeSlot}'`);
-            return res.status(400).json({
-                success: false,
-                message: "Invalid or past time slot provided"
-            });
-        }
-        const patient = await Patient.findOne({ email: patientEmail });
-        if (!patient) {
-            logger.warn(`Patient with email '${patientEmail}' not found`);
-            return res.status(404).json({ success: false, message: "Patient not found" });
+        // Extract doctorId from the query parameters
+        const { doctorId } = req.query;
+        // Validate the doctorId
+        if (!doctorId) {
+            logger.warn("Doctor ID not provided in request");
+            return res.status(400).json({ success: false, message: "Doctor ID is required" });
         }
 
-        const doctor = await User.findOne({ email: doctorEmail });
-        if (!doctor) {
-            logger.warn(`Doctor with email '${doctorEmail}' not found`);
-            return res.status(404).json({ success: false, message: "Doctor not found" });
+        // Fetch appointments for the specified doctor ID
+        const appointments = await Appointment.find({ doctorId }).populate("patientId", "name email");
+
+        if (appointments.length === 0) {
+            logger.info(`No appointments found for doctor ID '${doctorId}'`);
+            return res.status(404).json({ success: false, message: "No appointments found" });
         }
 
-        const conflictingAppointment = await Appointment.findOne({
-            doctorId: doctor._id,
-            timeSlot: appointmentDate
-        });
-
-        if (conflictingAppointment) {
-            logger.warn(`Conflicting appointment for doctor ID '${doctor._id}' at '${timeSlot}'`);
-            return res.status(400).json({
-                success: false,
-                message: "Doctor is already booked for this time slot"
-            });
-        }
-        const newAppointment = new Appointment({
-            patientId: patient._id,
-            doctorId: doctor._id,
-            reason,
-            timeSlot: appointmentDate,
-            status: "scheduled"
-        });
-
-        await newAppointment.save();
-        logger.info(`Scheduled appointment for patient '${patientEmail}' with doctor '${doctorEmail}'`);
-        return res.status(201).json({
+        // Return the fetched appointments
+        logger.info(`Fetched ${appointments.length} appointments for doctor ID '${doctorId}'`);
+        return res.status(200).json({
             success: true,
-            message: "Appointment scheduled successfully",
-            data: newAppointment
+            message: "Appointments fetched successfully",
+            data: appointments,
         });
     } catch (error) {
-        logger.error(`Error scheduling appointment: ${error.message}`);
+        logger.error(`Error fetching appointments: ${error.message}`);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
 
 export const getPatientLabResults = async (req, res) => {
     try {

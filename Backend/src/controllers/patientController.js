@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 import { getSocketInstance } from "../service/socketService.js";
 
 export const checkMedicalHistory = async (req, res) => {
-    const { patientId } = req.body;
+    const { patientId } = req.query;
     const { page = 1, limit = 10 } = req.query;
 
     try {
