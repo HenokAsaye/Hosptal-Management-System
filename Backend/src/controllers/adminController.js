@@ -101,10 +101,6 @@ export const getAllUsers = async (req, res) => {
         return res.status(500).json({ message: "Internal server error while fetching users." });
     }
 };
-import User from "../models/User.js";
-import Patient from "../models/Patient.js";
-import Admin from "../models/Admin.js";
-
 export const deleteUser = async (req, res) => {
   const { userId } = req.body; 
 
