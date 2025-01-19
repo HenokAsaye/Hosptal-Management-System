@@ -1,9 +1,64 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../../Components/Header/Header";
 import Sidebar from "../../../Components/Sidebar/Sidebar";
 import classes from "./ScheduleAppointment.module.css";
+import apiClient from "../../../lib/util";
 
 const ScheduleAppointment = () => {
+  const [formData, setFormData] = useState({
+    patientId: "",
+    doctorId: "",
+    date: "",
+    time: "",
+    reason: "",
+  });
+  const [responseMessage, setResponseMessage] = useState("");
+  const [error, setError] = useState("");
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    // Combine date and time into a single timeSlot
+    const timeSlot = `${formData.date}T${formData.time}`;
+
+    try {
+      const response = await apiClient.post("/reception/scheduleappointment", {
+        patientId: formData.patientId,
+        doctorId: formData.doctorId,
+        reason: formData.reason,
+        timeSlot,
+      });
+
+      // Show success message and clear form
+      setResponseMessage("Appointment created successfully!");
+      setError("");
+      setFormData({
+        patientId: "",
+        doctorId: "",
+        date: "",
+        time: "",
+        reason: "",
+      });
+
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setResponseMessage("");
+      }, 3000);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Failed to schedule appointment."
+      );
+      setResponseMessage("");
+    }
+  };
+
   return (
     <div>
       {/* Header Component */}
@@ -17,15 +72,25 @@ const ScheduleAppointment = () => {
         <div className={classes.content}>
           <h2 className={classes.pageTitle}>Schedule Appointment</h2>
 
+          {/* Alert Messages */}
+          {responseMessage && (
+            <div className={classes.successMessage}>{responseMessage}</div>
+          )}
+          {error && <div className={classes.errorMessage}>{error}</div>}
+
           {/* Appointment Form */}
-          <form className={classes.form}>
+          <form className={classes.form} onSubmit={handleSubmit}>
             <div className={classes.formGroup}>
               <label htmlFor="patient-id">Patient ID</label>
               <input
                 type="text"
                 id="patient-id"
+                name="patientId"
                 placeholder="Enter Patient ID"
                 className={classes.input}
+                value={formData.patientId}
+                onChange={handleChange}
+                required
               />
             </div>
             <div className={classes.formGroup}>
@@ -33,7 +98,11 @@ const ScheduleAppointment = () => {
               <input
                 type="date"
                 id="date"
+                name="date"
                 className={classes.input}
+                value={formData.date}
+                onChange={handleChange}
+                required
               />
             </div>
             <div className={classes.formGroup}>
@@ -41,7 +110,11 @@ const ScheduleAppointment = () => {
               <input
                 type="time"
                 id="time"
+                name="time"
                 className={classes.input}
+                value={formData.time}
+                onChange={handleChange}
+                required
               />
             </div>
             <div className={classes.formGroup}>
@@ -49,8 +122,24 @@ const ScheduleAppointment = () => {
               <input
                 type="text"
                 id="doctor-id"
+                name="doctorId"
                 placeholder="Enter Doctor ID"
                 className={classes.input}
+                value={formData.doctorId}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className={classes.formGroup}>
+              <label htmlFor="reason">Reason</label>
+              <textarea
+                id="reason"
+                name="reason"
+                placeholder="Enter Reason for Appointment"
+                className={classes.input}
+                value={formData.reason}
+                onChange={handleChange}
+                required
               />
             </div>
             <div className={classes.formButtons}>

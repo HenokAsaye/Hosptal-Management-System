@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Add navigation
 import Header from "../../../Components/Header/Header";
 import Sidebar from "../../../Components/Sidebar/Sidebar";
 import apiClient from "../../../lib/util"; // Ensure this path matches your file structure
 import classes from "./RegisterPatient.module.css";
 
 const RegisterPatient = () => {
+  const navigate = useNavigate(); // Navigation hook
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
@@ -25,22 +27,12 @@ const RegisterPatient = () => {
     e.preventDefault();
 
     try {
-      // Post request to the backend API to register a patient
+      // Post request to register patient
       const response = await apiClient.post("/reception/registerpatient", formData);
 
-      // Handling response from backend
       if (response.data.success) {
-        alert(response.data.message);
-        setFormData({
-          name: "",
-          contact: "",
-          email: "",
-          password: "",
-          age: "",
-          region: "",
-          city: "",
-          woreda: "",
-        });
+        alert("Account created successfully. Redirecting to verification page...");
+        navigate("/verify-email", { state: { email: formData.email } }); // Navigate with email
       } else {
         alert(response.data.message || "Something went wrong");
       }
@@ -164,9 +156,6 @@ const RegisterPatient = () => {
             <div className={classes.formButtons}>
               <button type="submit" className={classes.btnPrimary}>
                 Register Patient
-              </button>
-              <button type="button" className={classes.btnSecondary}>
-                View Patients
               </button>
             </div>
           </form>

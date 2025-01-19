@@ -18,7 +18,6 @@ import Loader from "./Components/Loader/Loader";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import PatientData from "./Pages/Doctor/PatientData/PatientData";
 import DoctorAppointments from "./Pages/Doctor/DoctorAppointments/DoctorAppointments";
-import DoctorNotifications from "./Pages/Doctor/DoctorNotifications/DoctorNotifications";
 import Availability from "./Pages/Doctor/Availability/Availability";
 import RegisterPatient from "./Pages/Receptionist/RegisterPatient/RegisterPatient";
 import ScheduleAppointment from "./Pages/Receptionist/ScheduleAppointment/ScheduleAppointment";
@@ -32,6 +31,8 @@ import MedicationAvailability from "./Pages/Pharmacist/MedicationAvailability/Me
 import Inventory from "./Pages/Pharmacist/Inventory/Inventory";
 import GetPatient from "./Pages/Nurse/GetPatient/Getpatient";
 import CheckMedication from "./Pages/Nurse/CheckMedication/CheckMedication";
+import DoctorMedicalHistory from "./Pages/Doctor/DoctorMedicalHistory/DoctorMedicalHistory";
+import PatientMedicalHistory from "./Pages/Patient/PatientMedicalHistory/PatientMedicalHistory";
 
 function Routering() {
   const { role, isLoading } = useRole();
@@ -108,6 +109,14 @@ function Routering() {
           }
         />
         <Route
+          path="/patient-medicalHistory"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientMedicalHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/patient-appointment"
           element={
             <ProtectedRoute requiredRole="patient">
@@ -148,10 +157,10 @@ function Routering() {
           }
         />
         <Route
-          path="/doctor-notification"
+          path="/doctor-medicalHistory"
           element={
             <ProtectedRoute requiredRole="doctor">
-              <DoctorNotifications /> 
+              <DoctorMedicalHistory /> 
             </ProtectedRoute>
           }
         />

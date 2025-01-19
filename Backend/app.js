@@ -26,7 +26,7 @@ app.use("/doctor",doctorroute);
 app.use("/patient",patientroute);
 app.use("/reception",receptionroute);
 app.use("/inventory",inventoryroute);
-app.use("lab",labroute);
+app.use("/lab",labroute);
 app.use("/notification",notificationroute)
 app.use("/admin", adminRoutes);
 app.use(authenticateToken);

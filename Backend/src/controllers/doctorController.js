@@ -9,7 +9,7 @@ import { logger } from "../config/logger.env.js";
 
 
 export const getPatientByName = async (req, res) => {
-    const { name } = req.body;
+    const { name } = req.query; // Use req.query for GET request parameters
     try {
         const patient = await Patient.find({ name: new RegExp(name, 'i') });
         if (!patient.length) {
@@ -27,8 +27,9 @@ export const getPatientByName = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
 export const getPatientMedicalHistory = async (req, res) => {
-    const { patientId } = req.body;
+    const { patientId } = req.query;
     try {
         const patient = await Patient.findById(patientId);
         if (!patient) {
