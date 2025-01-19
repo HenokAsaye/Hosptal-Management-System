@@ -102,45 +102,46 @@ export const getAllUsers = async (req, res) => {
     }
 };
 export const deleteUser = async (req, res) => {
-  const { userId } = req.body; 
+    const { userId } = req.query;
 
-  try {
-    const user = await User.findById(userId);
-    if (user) {
-      await User.findByIdAndDelete(userId);
-      return res.status(200).json({
-        success: true,
-        message: "User deleted successfully from User model",
-      });
+    try {
+        const user = await User.findById(userId);
+        if (user) {
+            await User.findByIdAndDelete(userId);
+            return res.status(200).json({
+                success: true,
+                message: "User deleted successfully from User model",
+            });
+        }
+        const patient = await Patient.findById(userId);
+        if (patient) {
+            await Patient.findByIdAndDelete(userId);
+            return res.status(200).json({
+                success: true,
+                message: "Patient deleted successfully from Patient model",
+            });
+        }
+        const admin = await Admin.findById(userId);
+        if (admin) {
+            await Admin.findByIdAndDelete(userId);
+            return res.status(200).json({
+                success: true,
+                message: "Admin deleted successfully from Admin model",
+            });
+        }
+        return res.status(404).json({
+            success: false,
+            message: "User not found in any model",
+        });
+    } catch (error) {
+        console.error("Error deleting user:", error.message);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
     }
-    const patient = await Patient.findById(userId);
-    if (patient) {
-      await Patient.findByIdAndDelete(userId);
-      return res.status(200).json({
-        success: true,
-        message: "Patient deleted successfully from Patient model",
-      });
-    }
-    const admin = await Admin.findById(userId);
-    if (admin) {
-      await Admin.findByIdAndDelete(userId);
-      return res.status(200).json({
-        success: true,
-        message: "Admin deleted successfully from Admin model",
-      });
-    }
-    return res.status(404).json({
-      success: false,
-      message: "User not found in any model",
-    });
-  } catch (error) {
-    console.error("Error deleting user:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
 };
+
 export const countAllUsers = async (req, res) => {
     try {
       const doctorCount = await User.countDocuments({ role: 'doctor' });

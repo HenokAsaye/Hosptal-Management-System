@@ -34,6 +34,7 @@ import CheckMedication from "./Pages/Nurse/CheckMedication/CheckMedication";
 import DoctorMedicalHistory from "./Pages/Doctor/DoctorMedicalHistory/DoctorMedicalHistory";
 import PatientMedicalHistory from "./Pages/Patient/PatientMedicalHistory/PatientMedicalHistory";
 import InviteAdmin from "./Pages/Admin/InviteAdmin/InviteAdmin";
+import ManageUser from "./Pages/Admin/ManageUser/ManageUser";
 
 function Routering() {
   const { role, isLoading } = useRole();
@@ -106,6 +107,14 @@ function Routering() {
           element={
             <ProtectedRoute requiredRole="Admin">
               <InviteAdmin/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manage-users"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <ManageUser/>
             </ProtectedRoute>
           }
         />

@@ -51,6 +51,9 @@ header {
 .navbar li {
     display: inline;
 }
+.navbar ul li a {
+    font-size: 18px;
+}
 
 .navbar a {
     color: #fff;
