@@ -36,7 +36,7 @@ export const getPatientMedicalHistory = async (req, res) => {
             logger.warn(`Patient with ID '${patientId}' not found`);
             return res.status(404).json({ success: false, message: "Patient not found" });
         }
-        if (patient.PaymentStatus === "Not Paid") {
+        if (patient.PaymentStatus.toString() !== "Paid") {
             logger.warn(`Patient ID '${patientId}' has unpaid status`);
             return res.status(400).json({ success: false, message: "Payment status is not valid" });
         }
