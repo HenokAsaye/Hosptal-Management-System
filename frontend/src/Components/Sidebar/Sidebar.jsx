@@ -7,6 +7,8 @@ import { RiPassValidFill } from "react-icons/ri";
 import { MdEventAvailable } from "react-icons/md";
 import { IoSettingsSharp, IoNotifications } from "react-icons/io5";
 import { FaHandHoldingMedical } from "react-icons/fa";
+import { SiAdobeaudition } from "react-icons/si";
+import { FcInvite } from "react-icons/fc";
 
 const Sidebar = () => {
   const { role } = useRole();  // Access role from RoleContext
@@ -35,13 +37,14 @@ const Sidebar = () => {
             <li><Link to="/doctor-availability" className={location.pathname === "/doctor-availability" ? classes.active : ""}><MdEventAvailable size={24} className="icon" /> Availability</Link></li>
           </ul>
         );
-      case "admin":
+      case "Admin":
         return (
           <ul>
-            <li><Link to="/admin-dashboard" className={location.pathname === "/admin-dashboard" ? classes.active : ""}><FaHome size={24} className="icon" /> Dashboard</Link></li>
-            <li><Link to="/audit-logs" className={location.pathname === "/audit-logs" ? classes.active : ""}>Audit Logs</Link></li>
+            <li><Link to="/Admin/dashboard" className={location.pathname === "/admin-dashboard" ? classes.active : ""}><FaHome size={24} className="icon" /> Dashboard</Link></li>
+            <li><Link to="/audit-logs" className={location.pathname === "/audit-logs" ? classes.active : ""}><SiAdobeaudition size={24} className="icon" />Audit Logs</Link></li>
             <li><Link to="/manage-users" className={location.pathname === "/manage-users" ? classes.active : ""}><IoSettingsSharp size={24} className="icon" /> Manage Users</Link></li>
             <li><Link to="/generate-reports" className={location.pathname === "/generate-reports" ? classes.active : ""}><FaTable size={24} className="icon" /> Generate Reports</Link></li>
+            <li><Link to="/invite-admin" className={location.pathname === "/invite-admin" ? classes.active : ""}><FcInvite size={24} className="icon" color="black"/> Invite Admin</Link></li>
           </ul>
         );
       case "nurse":

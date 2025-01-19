@@ -100,26 +100,28 @@ const CancelAppointment = () => {
           {/* Display message */}
           {message && <div className={classes.message}>{message}</div>}
 
+
           {/* Display Appointments */}
           {isSearching ? (
             <p>Loading appointments...</p>
           ) : hasSearched && appointments.length > 0 ? (
             <div>
-              {appointments.map((appointment) => (
-                <div
-                  key={appointment._id}
-                  style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "10px" }}
-                >
-                  <p>Patient: {appointment.patientId.name}</p>
-                  <p>Time Slot: {new Date(appointment.timeSlot).toLocaleString()}</p>
-                  <button
-                    onClick={() => handleCancel(appointment._id)}
-                    className={classes.cancelButton}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ))}
+            {appointments.map((appointment) => (
+      <div
+        key={appointment._id}
+        style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "10px" }}
+      >
+        <p>Patient: {appointment.patientId ? appointment.patientId.name : "Unknown"}</p>
+        <p>Time Slot: {new Date(appointment.timeSlot).toLocaleString()}</p>
+        <button
+          onClick={() => handleCancel(appointment._id)}
+          className={classes.cancelButton}
+        >
+          Cancel
+        </button>
+      </div>
+    ))}
+
             </div>
           ) : hasSearched ? (
             <p>No appointments found for this doctor.</p>

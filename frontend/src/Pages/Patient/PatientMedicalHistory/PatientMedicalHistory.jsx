@@ -3,8 +3,8 @@ import apiClient from "../../../lib/util";
 import Header from "../../../Components/Header/Header";
 import Sidebar from "../../../Components/Sidebar/Sidebar";
 import classes from "./PatientMedicalHistory.module.css";
-import { FaSearch } from "react-icons/fa";
 import Cookies from "js-cookie"; // Importing js-cookie to manage cookies
+import Loader from "../../../Components/Loader/Loader"
 
 const PatientMedicalHistory = () => {
   const [patientMedicalHistory, setPatientMedicalHistory] = useState(null); // Medical history data
@@ -51,6 +51,10 @@ const PatientMedicalHistory = () => {
       fetchMedicalHistory(newPage);
     }
   };
+
+  if (loading){
+    return <Loader/>
+  }
 
   return (
     <div>

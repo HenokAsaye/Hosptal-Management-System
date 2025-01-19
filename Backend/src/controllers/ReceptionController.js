@@ -123,6 +123,7 @@ export const scheduleAppointment = async (req, res) => {
             });
         }
 
+
         // Find the doctor by name
         const doctor = await User.findOne({ name: doctorName, role: "doctor" });
         if (!doctor) {
@@ -242,6 +243,7 @@ export const searchAppointmentsByDoctor = async (req, res) => {
 
         const appointments = await Appointment.find({ doctorId: doctor._id, status: "scheduled" })
             .populate("patientId", "name"); // Populate patientId to include patient name
+
 
         return res.status(200).json({
             success: true,
@@ -371,6 +373,7 @@ export const getTodaysPatients = async (req, res) => {
     // Get the next day (exclusive upper bound for the date range)
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
+
 
     // Fetch appointments with a timeSlot within today
     const appointments = await Appointment.find({
