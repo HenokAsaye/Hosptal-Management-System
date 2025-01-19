@@ -145,7 +145,7 @@ export const patientAppointment = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: patientAppointments,
-            totalCount: totalAppointments, // Add totalCount
+            totalCount: totalAppointments, 
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
