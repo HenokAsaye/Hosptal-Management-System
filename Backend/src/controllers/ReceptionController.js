@@ -255,54 +255,77 @@ export const searchAppointmentsByDoctor = async (req, res) => {
         });
     }
 };
-
-
 export const verifyPatientPayment = async (req, res) => {
-    const { patientId } = req.query;
+    const { patientId } = req.body; // Changed to req.body
+
     try {
+        // Find the patient by ID
         const patient = await Patient.findById(patientId);
+
         if (!patient) {
             return res.status(404).json({
                 success: false,
                 message: "Patient not found",
             });
         }
+
+        // Get current date
+        const currentDate = new Date();
+
+        // Logic for "Paid" status
         if (patient.PaymentStatus === "Paid") {
-            const currentDate = new Date();
             const lastPaymentDate = new Date(patient.updatedAt);
             const daysSinceLastPayment = Math.floor(
                 (currentDate - lastPaymentDate) / (1000 * 60 * 60 * 24)
             );
 
             if (daysSinceLastPayment > 14) {
+                // Update status to "Not Paid"
                 patient.PaymentStatus = "Not Paid";
-                patient.updatedAt = currentDate; 
+                patient.updatedAt = currentDate;
                 await patient.save();
 
                 return res.status(200).json({
                     success: true,
-                    message: "Patient payment status changed to 'Not Paid' after 14 days.",
+                    message: "Patient payment status automatically changed to 'Not Paid' after 14 days.",
                 });
             }
 
             return res.status(200).json({
                 success: true,
-                message: "Patient payment is verified successfully.",
-            });
-        } else {
-            return res.status(400).json({
-                success: false,
-                message: "Patient payment not verified.",
+                message: "Patient payment is still valid and verified.",
             });
         }
+
+        // Logic for "Not Paid" status
+        if (patient.PaymentStatus === "Not Paid") {
+            // Update status to "Paid"
+            patient.PaymentStatus = "Paid";
+            patient.updatedAt = currentDate;
+            await patient.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Patient payment status updated to 'Paid'.",
+            });
+        }
+
+        // Default response (shouldn't reach here)
+        return res.status(400).json({
+            success: false,
+            message: "Unexpected payment status.",
+        });
+
     } catch (error) {
         console.error("Error verifying patient payment:", error);
+
         return res.status(500).json({
             success: false,
             message: "Internal server error",
         });
     }
 };
+
 
 export const getTodaysAppointments = async (req, res) => {
    try {
