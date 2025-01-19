@@ -101,6 +101,42 @@ export const getAllUsers = async (req, res) => {
         return res.status(500).json({ message: "Internal server error while fetching users." });
     }
 };
+
+export const countAllUsers = async (req, res) => {
+    try {
+      const doctorCount = await User.countDocuments({ role: 'doctor' });
+      const userCount = await User.countDocuments({ role: 'receptionist' });
+      const pharmacistCount = await User.countDocuments({ role: 'pharmacist' });
+      const labTechnicianCount = await User.countDocuments({ role: 'lab-technician' });
+      const adminCount = await Admin.countDocuments({ role: 'Admin' });
+      const patientCount = await Patient.countDocuments({ role: 'patient' });
+      const nurseCount = await User.countDocuments({ role: 'nurse' });
+      const totalUsers = userCount + adminCount + patientCount + pharmacistCount + labTechnicianCount + doctorCount + nurseCount;
+  
+      return res.status(200).json({
+        success: true,
+        message: "Counts retrieved successfully",
+        data: {
+          userCount,
+          adminCount,
+          patientCount,
+          doctorCount,
+          pharmacistCount,
+          labTechnicianCount,
+          nurseCount,
+          totalUsers,
+        },
+      });
+    } catch (error) {
+      console.error("Error counting users:", error.message);
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
+    }
+  };
+  
+
 export const updateUserDetails = async (req, res) => {
     const { userId, name, email, role } = req.body;
 
