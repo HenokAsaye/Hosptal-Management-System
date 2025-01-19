@@ -223,3 +223,29 @@ body {
         font-size: 18px;
     }
 }
+.patientTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.patientTable th, .patientTable td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.patientTable th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.patientTable td {
+  background-color: #fafafa;
+}
+
+.error {
+  color: red;
+  font-size: 16px;
+  margin-top: 10px;
+}
