@@ -76,7 +76,7 @@ function Routering() {
 
         {/* Protected Role-Specific Routes */}
         <Route
-          path="/admin/dashboard"
+          path="/Admin/dashboard"
           element={
             <ProtectedRoute requiredRole="Admin">
               <AdminDashboard />
