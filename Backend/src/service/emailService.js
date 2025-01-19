@@ -102,7 +102,7 @@ export const sendNotificationEmail = async (recipientEmail, doctorName, timeSlot
         return await sendEmail({
             to: recipientEmail,
             subject: "Appointment Cancellation",
-            html: htmlContent,
+            htmlContent,
         });
     } catch (error) {
         logger.error("Failed to send Appointment Cancellation Email:", error);

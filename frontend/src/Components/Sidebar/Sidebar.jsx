@@ -35,7 +35,7 @@ const Sidebar = () => {
             <li><Link to="/doctor-availability" className={location.pathname === "/doctor-availability" ? classes.active : ""}><MdEventAvailable size={24} className="icon" /> Availability</Link></li>
           </ul>
         );
-      case "admin":
+      case "Admin":
         return (
           <ul>
             <li><Link to="/admin-dashboard" className={location.pathname === "/admin-dashboard" ? classes.active : ""}><FaHome size={24} className="icon" /> Dashboard</Link></li>
